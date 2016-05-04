@@ -1,23 +1,28 @@
 package ch.eawag.bimgur
 
-import ch.eawag.bimgur.page.{GroupPage, UserPage}
+import ch.eawag.bimgur.controller.PageController
+import ch.eawag.bimgur.page.{GroupPage, Page, UserPage}
+import org.scalajs.dom.{document, window}
 
 import scala.scalajs.js.JSApp
-import org.scalajs.dom.document
-import scalatags.JsDom.all._
 
 object App extends JSApp {
 
   override def main() = {
 
-    val contents = div(
-      h1("Users"),
-      new UserPage().render,
-      h1("Groups"),
-      new GroupPage().render
-    )
+    PageController.install(window, document)
 
-    document.body.appendChild(contents.render)
+    appendPage(UserPage)
+    appendPage(GroupPage)
+  }
+
+  def appendPage(page: Page) = {
+    val pageElement = document.getElementById(page.pageId)
+    if (pageElement != null) {
+      pageElement.appendChild(page.render)
+    } else {
+      println(s"HTML must contain an element with id '$page.pageId' (to dynamically attach contents)")
+    }
   }
 
 }

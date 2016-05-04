@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Bimgur Client</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
 </head>
 <body>
+
+<div class="container">
+    <ul class="nav nav-tabs">
+        <li role="presentation"><a href="#users">Users</a></li>
+        <li role="presentation"><a href="#groups">Groups</a></li>
+    </ul>
+    <div id="users" class="page"></div>
+    <div id="groups" class="page"></div>
+</div>
 
 <!-- Include JavaScript dependencies -->
 <script type="text/javascript" src="./target/scala-2.11/bimgur-client-jsdeps.js"></script>
@@ -14,6 +26,15 @@
 
 <!-- Run JSApp -->
 <script type="text/javascript" src="./target/scala-2.11/bimgur-client-launcher.js"></script>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<!-- Bootstrap 3.3.6 -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        crossorigin="anonymous"></script>
+
 
 </body>
 </html>

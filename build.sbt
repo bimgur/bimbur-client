@@ -8,7 +8,8 @@ lazy val root = (project in file(".")).
 
 libraryDependencies ++= Seq(
   "com.lihaoyi" %%% "upickle" % "0.4.0",
-  "com.lihaoyi" %%% "scalatags" % "0.5.5"
+  "com.lihaoyi" %%% "scalatags" % "0.5.5",
+  "com.github.karasiq" %%% "scalajs-bootstrap" % "1.0.5"
 )
 
 persistLauncher in Compile := true
