@@ -7,7 +7,7 @@ trait Page {
 
   val pageId: PageId
 
-  def render: dom.Element
+  def content: dom.Element
 
 }
 

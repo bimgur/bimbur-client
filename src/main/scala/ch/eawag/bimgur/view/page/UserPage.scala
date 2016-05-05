@@ -14,7 +14,7 @@ object UserPage extends Page {
 
   val pageId = "users"
 
-  def render = {
+  def content = {
     import dom.ext._
 
     import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue

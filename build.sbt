@@ -3,7 +3,8 @@ lazy val root = (project in file(".")).
   settings(
     name := "Bimgur Client",
     scalaVersion := "2.11.8",
-    version := "0.1-SNAPSHOT"
+    version := "0.1-SNAPSHOT",
+    scalacOptions += "-feature"
   )
 
 libraryDependencies ++= Seq(

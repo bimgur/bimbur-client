@@ -14,7 +14,7 @@ object GroupPage extends Page {
 
   val pageId = "groups"
 
-  def render = {
+  def content = {
     import dom.ext._
 
     import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue

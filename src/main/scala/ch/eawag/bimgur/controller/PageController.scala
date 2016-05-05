@@ -8,7 +8,7 @@ import org.scalajs.dom.html.Document
 
 class PageController(presentationModel: PresentationModel) {
 
-  val Pages = Seq(UserPage, GroupPage)
+  val knownPages = Seq(UserPage, GroupPage)
 
   def observePageNavigation(window: Window, document: Document) = {
     window.addEventListener("hashchange", { (event: dom.Event) =>
@@ -18,15 +18,12 @@ class PageController(presentationModel: PresentationModel) {
   }
 
   private def navigateTo(hash: String, document: Document) = {
-    if (Pages.exists(_.pageId == hash)) {
-      Pages.foreach { page =>
-        if (page.pageId == hash) {
-          presentationModel.activePage() = Some(page.pageId)
-        }
-      }
-    } else {
-      presentationModel.activePage() = None
-      println(s"Unknown location hash '#$hash'")
+    val page = knownPages.find(_.pageId == hash)
+    page match {
+      case Some(activePage) => presentationModel.activePage() = Some(activePage.pageId)
+      case _ =>
+        presentationModel.activePage() = None
+        println(s"Unknown location hash '#$hash'")
     }
   }
 

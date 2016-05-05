@@ -14,8 +14,8 @@ object App extends JSApp {
 
     pageController.observePageNavigation(window, document)
 
-    val mainView = new MainView(presentationModel).render
-    document.body.appendChild(mainView)
+    val mainView = new MainView(presentationModel).content
+    document.getElementById("root").appendChild(mainView.render)
   }
 
 }
