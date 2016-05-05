@@ -1,6 +1,6 @@
-package ch.eawag.bimgur.page
+package ch.eawag.bimgur.view.page
 
-import ch.eawag.bimgur.page.Page.PageId
+import ch.eawag.bimgur.view.page.Page.PageId
 import org.scalajs.dom
 
 trait Page {

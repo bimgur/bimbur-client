@@ -1,15 +1,16 @@
 package ch.eawag.bimgur.controller
 
-import ch.eawag.bimgur.page.{GroupPage, UserPage}
+import ch.eawag.bimgur.view.PresentationModel
+import ch.eawag.bimgur.view.page.{GroupPage, UserPage}
 import org.scalajs.dom
 import org.scalajs.dom.Window
 import org.scalajs.dom.html.Document
 
-object PageController {
+class PageController(presentationModel: PresentationModel) {
 
   val Pages = Seq(UserPage, GroupPage)
 
-  def install(window: Window, document: Document) = {
+  def observePageNavigation(window: Window, document: Document) = {
     window.addEventListener("hashchange", { (event: dom.Event) =>
       val hash = window.location.hash
       navigateTo(hash.tail, document)
@@ -17,20 +18,16 @@ object PageController {
   }
 
   private def navigateTo(hash: String, document: Document) = {
-
     if (Pages.exists(_.pageId == hash)) {
       Pages.foreach { page =>
-        val element = document.getElementById(page.pageId)
         if (page.pageId == hash) {
-          element.setAttribute("style", "display:block")
-        } else {
-          element.setAttribute("style", "display:none")
+          presentationModel.activePage() = Some(page.pageId)
         }
       }
     } else {
+      presentationModel.activePage() = None
       println(s"Unknown location hash '#$hash'")
     }
-
   }
 
 }

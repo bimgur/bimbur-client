@@ -1,33 +1,33 @@
-package ch.eawag.bimgur.page
+package ch.eawag.bimgur.view.page
 
-import ch.eawag.bimgur.model.GroupList
+import ch.eawag.bimgur.model.UserList
 import org.scalajs.dom
-import org.scalajs.dom._
+import org.scalajs.dom.XMLHttpRequest
 import upickle.default._
 
 import scala.concurrent.Future
 import scalatags.JsDom.all._
 
-object GroupPage extends Page {
+object UserPage extends Page {
 
-  val Url = "http://kermit:kermit@localhost:8090/activiti-rest/service/identity/groups"
+  val Url = "http://kermit:kermit@localhost:8090/activiti-rest/service/identity/users"
 
-  val pageId = "groups"
+  val pageId = "users"
 
   def render = {
     import dom.ext._
 
     import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
-    val loading = div("Loading Groups...").render
+    val loading = div("Loading Users...").render
     val content = div(loading).render
 
     val requestFuture: Future[XMLHttpRequest] = Ajax.get(Url)
     requestFuture.onSuccess { case response =>
-      val groups = read[GroupList](response.responseText).data
-      val list = ul(for (group <- groups) yield li(group.name))
+      val users = read[UserList](response.responseText).data
+      val list = ul(for (user <- users) yield li(user.firstName))
       content.removeChild(loading)
-      content.appendChild(div(h1("Groups"), list).render)
+      content.appendChild(div(h1("Users"), list).render)
     }
     requestFuture.onFailure { case error =>
       println(error)
