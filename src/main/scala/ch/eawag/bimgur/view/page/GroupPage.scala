@@ -1,12 +1,13 @@
 package ch.eawag.bimgur.view.page
 
-import ch.eawag.bimgur.model.GroupList
-import org.scalajs.dom
-import org.scalajs.dom._
+import ch.eawag.bimgur.model.{Group, GroupList}
+import com.thoughtworks.binding.Binding.Vars
+import com.thoughtworks.binding.{Binding, dom}
+import org.scalajs.dom.ext.Ajax
+import org.scalajs.dom.html._
 import upickle.default._
 
-import scala.concurrent.Future
-import scalatags.JsDom.all._
+import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 object GroupPage extends Page {
 
@@ -14,25 +15,25 @@ object GroupPage extends Page {
 
   val pageId = "groups"
 
-  def content = {
-    import dom.ext._
+  val groups = Vars.empty[Group]
 
-    import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
+  val requestFuture = Ajax.get(Url)
+  requestFuture.onSuccess { case response =>
+    groups.get ++= read[GroupList](response.responseText).data
+  }
+  requestFuture.onFailure { case error =>
+    println(error)
+  }
 
-    val loading = div("Loading Groups...").render
-    val content = div(loading).render
-
-    val requestFuture: Future[XMLHttpRequest] = Ajax.get(Url)
-    requestFuture.onSuccess { case response =>
-      val groups = read[GroupList](response.responseText).data
-      val list = ul(for (group <- groups) yield li(group.name))
-      content.removeChild(loading)
-      content.appendChild(div(h1("Groups"), list).render)
-    }
-    requestFuture.onFailure { case error =>
-      println(error)
-    }
-    content
+  @dom
+  def groupList: Binding[UList] = {
+    <ul>
+      {for (group <- groups) yield {
+      <li>
+        {group.name}
+      </li>
+    }}
+    </ul>
   }
 
 }

@@ -9,10 +9,12 @@ lazy val root = (project in file(".")).
 
 libraryDependencies ++= Seq(
   "com.lihaoyi" %%% "upickle" % "0.4.0",
-  "com.lihaoyi" %%% "scalatags" % "0.5.5",
-  "com.lihaoyi" %%% "scalarx" % "0.2.8",
-  "be.doeraene" %%% "scalajs-jquery" % "0.9.0"
+  "be.doeraene" %%% "scalajs-jquery" % "0.9.0",
+  "org.singlespaced" %%% "scalajs-d3" % "0.3.3",
+  "com.thoughtworks.binding" %%% "dom" % "latest.release"
 )
+
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 skip in packageJSDependencies := false
 jsDependencies ++= Seq(

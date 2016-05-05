@@ -1,7 +1,8 @@
 package ch.eawag.bimgur
 
-import ch.eawag.bimgur.controller.PageController
+import ch.eawag.bimgur.controller.PageRouter
 import ch.eawag.bimgur.view.{MainView, PresentationModel}
+import com.thoughtworks.binding.dom
 import org.scalajs.dom.{document, window}
 
 import scala.scalajs.js.JSApp
@@ -10,12 +11,12 @@ object App extends JSApp {
 
   override def main() = {
     val presentationModel = new PresentationModel
-    val pageController = new PageController(presentationModel)
+    val router = new PageRouter(presentationModel)
 
-    pageController.observePageNavigation(window, document)
+    router.observePageNavigation(window, document)
 
-    val mainView = new MainView(presentationModel).content
-    document.getElementById("root").appendChild(mainView.render)
+    val mainView = new MainView(presentationModel).root
+    dom.render(document.getElementById("root"), mainView)
   }
 
 }

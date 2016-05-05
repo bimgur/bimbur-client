@@ -6,7 +6,7 @@ import org.scalajs.dom
 import org.scalajs.dom.Window
 import org.scalajs.dom.html.Document
 
-class PageController(presentationModel: PresentationModel) {
+class PageRouter(presentationModel: PresentationModel) {
 
   val knownPages = Seq(UserPage, GroupPage)
 
@@ -20,9 +20,8 @@ class PageController(presentationModel: PresentationModel) {
   private def navigateTo(hash: String, document: Document) = {
     val page = knownPages.find(_.pageId == hash)
     page match {
-      case Some(activePage) => presentationModel.activePage() = Some(activePage.pageId)
+      case Some(activePage) => presentationModel.activePage := Some(activePage.pageId)
       case _ =>
-        presentationModel.activePage() = None
         println(s"Unknown location hash '#$hash'")
     }
   }

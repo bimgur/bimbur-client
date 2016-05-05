@@ -1,12 +1,13 @@
 package ch.eawag.bimgur.view.page
 
-import ch.eawag.bimgur.model.UserList
-import org.scalajs.dom
-import org.scalajs.dom.XMLHttpRequest
+import ch.eawag.bimgur.model.{User, UserList}
+import com.thoughtworks.binding.Binding.Vars
+import com.thoughtworks.binding.{Binding, dom}
+import org.scalajs.dom.ext.Ajax
+import org.scalajs.dom.html.UList
 import upickle.default._
 
-import scala.concurrent.Future
-import scalatags.JsDom.all._
+import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 object UserPage extends Page {
 
@@ -14,25 +15,25 @@ object UserPage extends Page {
 
   val pageId = "users"
 
-  def content = {
-    import dom.ext._
+  val users = Vars.empty[User]
 
-    import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
+  val requestFuture = Ajax.get(Url)
+  requestFuture.onSuccess { case response =>
+    users.get ++= read[UserList](response.responseText).data
+  }
+  requestFuture.onFailure { case error =>
+    println(error)
+  }
 
-    val loading = div("Loading Users...").render
-    val content = div(loading).render
-
-    val requestFuture: Future[XMLHttpRequest] = Ajax.get(Url)
-    requestFuture.onSuccess { case response =>
-      val users = read[UserList](response.responseText).data
-      val list = ul(for (user <- users) yield li(user.firstName))
-      content.removeChild(loading)
-      content.appendChild(div(h1("Users"), list).render)
-    }
-    requestFuture.onFailure { case error =>
-      println(error)
-    }
-    content
+  @dom
+  def userList: Binding[UList] = {
+    <ul>
+      {for (user <- users) yield {
+      <li>
+        {user.firstName}
+      </li>
+    }}
+    </ul>
   }
 
 }
