@@ -1,21 +1,49 @@
 package ch.eawag.bimgur
 
-import ch.eawag.bimgur.controller.PageController
-import ch.eawag.bimgur.view.{MainView, PresentationModel}
-import org.scalajs.dom.{document, window}
+import ch.eawag.bimgur.App.Location.{GroupsLocation, UsersLocation}
+import ch.eawag.bimgur.components.{CGroupList, CUserList}
+import japgolly.scalajs.react._
+import japgolly.scalajs.react.extra.router._
+import org.scalajs.dom
+import org.scalajs.dom.document
 
-import scala.scalajs.js.JSApp
+import scala.scalajs.js
 
-object App extends JSApp {
+object App extends js.JSApp {
 
-  override def main() = {
-    val presentationModel = new PresentationModel
-    val pageController = new PageController(presentationModel)
+  val baseUrl = BaseUrl(dom.window.location.href.takeWhile(_ != '#'))
 
-    pageController.observePageNavigation(window, document)
+  sealed abstract class Location(val link: String)
 
-    val mainView = new MainView(presentationModel).content
-    document.getElementById("root").appendChild(mainView.render)
+  object Location {
+
+    object UsersLocation extends Location("users")
+
+    object GroupsLocation extends Location("groups")
+
+    def values = List[Location](UsersLocation, GroupsLocation)
+  }
+
+  val routerConfig: RouterConfig[Location] = RouterConfigDsl[Location].buildConfig { dsl =>
+    import dsl._
+
+    def filterRoute(s: Location): Rule = staticRoute("#/" + s.link, s) ~> renderR(ctl => {
+      s match {
+        case UsersLocation => CUserList()
+        case GroupsLocation => CGroupList()
+      }
+    })
+
+    val filterRoutes: Rule = Location.values.map(filterRoute).reduce(_ | _)
+
+    filterRoutes.notFound(redirectToPage(Location.UsersLocation)(Redirect.Replace))
+  }
+
+  val router: ReactComponentU[Unit, Resolution[Location], Any, TopNode] =
+    Router(baseUrl, routerConfig.logToConsole)()
+
+  def main() = {
+    ReactDOM.render(router, document.getElementById("root"))
   }
 
 }

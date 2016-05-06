@@ -7,17 +7,17 @@ lazy val root = (project in file(".")).
     scalacOptions += "-feature"
   )
 
+val scalaJsReactVersion = "0.11.1"
+
 libraryDependencies ++= Seq(
-  "com.lihaoyi" %%% "upickle" % "0.4.0",
-  "com.lihaoyi" %%% "scalatags" % "0.5.5",
-  "com.lihaoyi" %%% "scalarx" % "0.2.8",
-  "be.doeraene" %%% "scalajs-jquery" % "0.9.0"
+  "com.github.japgolly.scalajs-react" %%% "extra"        % scalaJsReactVersion,
+  "com.lihaoyi"                       %%% "upickle"      % "0.4.0"
 )
 
 skip in packageJSDependencies := false
 jsDependencies ++= Seq(
-  "org.webjars" % "jquery" % "2.1.4" / "2.1.4/jquery.js",
-  "org.webjars" % "bootstrap" % "3.3.6" / "bootstrap.js" minified "bootstrap.min.js" dependsOn "2.1.4/jquery.js"
+  "org.webjars.bower" % "react" % "15.0.1" / "react-with-addons.js" minified "react-with-addons.min.js" commonJSName "React",
+  "org.webjars.bower" % "react" % "15.0.1" / "react-dom.js" minified "react-dom.min.js" dependsOn "react-with-addons.js" commonJSName "ReactDOM"
 )
 
 persistLauncher in Compile := true
