@@ -32,12 +32,12 @@ object CUserList {
     def render(S: State) = {
 
       def createItem(user: User) = <.li(user.firstName)
-
       def renderUsers(users: Seq[User]) = <.ul(users map createItem)
 
       <.div(
         <.h3("Activiti Users"),
-        renderUsers(S.users)
+        renderUsers(S.users),
+        CChartD3(S.users.map(_.firstName))
       )
     }
   }

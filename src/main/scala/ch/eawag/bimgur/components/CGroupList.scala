@@ -33,12 +33,12 @@ object CGroupList {
     def render(S: State) = {
 
       def createItem(group: Group) = <.li(group.name)
-
       def renderGroups(groups: Seq[Group]) = <.ul(groups map createItem)
 
       <.div(
         <.h3("Activiti Groups"),
-        renderGroups(S.groups)
+        renderGroups(S.groups),
+        CChartD3(S.groups.map(_.name))
       )
     }
   }

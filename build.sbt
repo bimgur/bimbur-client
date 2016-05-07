@@ -11,7 +11,8 @@ val scalaJsReactVersion = "0.11.1"
 
 libraryDependencies ++= Seq(
   "com.github.japgolly.scalajs-react" %%% "extra"        % scalaJsReactVersion,
-  "com.lihaoyi"                       %%% "upickle"      % "0.4.0"
+  "com.lihaoyi"                       %%% "upickle"      % "0.4.0",
+  "org.singlespaced"                  %%% "scalajs-d3"   % "0.3.3"
 )
 
 skip in packageJSDependencies := false
