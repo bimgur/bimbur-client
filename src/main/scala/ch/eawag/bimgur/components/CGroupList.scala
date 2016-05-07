@@ -1,6 +1,6 @@
 package ch.eawag.bimgur.components
 
-import ch.eawag.bimgur.model.group.{Group, GroupList}
+import ch.eawag.bimgur.model.{Group, GroupList}
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.prefix_<^._
 import org.scalajs.dom._
@@ -15,20 +15,19 @@ object CGroupList {
 
   class Backend($: BackendScope[Unit, State]) {
 
-    def fetchGroups(e: ReactEventI) = {
-      val Url = "http://kermit:kermit@localhost:8090/activiti-rest/service/identity/groups"
+    def loadGroups = Callback {
+      val url = "http://kermit:kermit@localhost:8090/activiti-rest/service/identity/groups"
       import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
-      val requestFuture: Future[XMLHttpRequest] = Ajax.get(Url)
+      val requestFuture: Future[XMLHttpRequest] = Ajax.get(url)
       requestFuture.onSuccess { case response =>
         val groups = read[GroupList](response.responseText).data
-        println("Loaded new Groups")
+        println("Loaded new groups")
         $.modState(s => State(groups)).runNow()
       }
       requestFuture.onFailure { case error =>
         println(error)
       }
-      $.modState(s => State(Nil))
     }
 
     def render(S: State) = {
@@ -39,8 +38,7 @@ object CGroupList {
 
       <.div(
         <.h3("Activiti Groups"),
-        renderGroups(S.groups),
-        <.button("Refresh", ^.onClick ==> fetchGroups)
+        renderGroups(S.groups)
       )
     }
   }
@@ -48,6 +46,7 @@ object CGroupList {
   private val component = ReactComponentB[Unit]("CGroupList")
     .initialState(State(Nil))
     .renderBackend[Backend]
+    .componentDidMount(_.backend.loadGroups)
     .build
 
   def apply() = component()

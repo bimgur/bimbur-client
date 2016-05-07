@@ -1,4 +1,4 @@
-package ch.eawag.bimgur.model.group
+package ch.eawag.bimgur.model
 
 case class GroupList(data: Seq[Group])
 
