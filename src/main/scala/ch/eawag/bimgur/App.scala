@@ -4,15 +4,17 @@ import ch.eawag.bimgur.App.Location.{GroupsLocation, UsersLocation}
 import ch.eawag.bimgur.components.{CGroupList, CUserList}
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router._
+import japgolly.scalajs.react.vdom.prefix_<^._
 import org.scalajs.dom
 import org.scalajs.dom.document
 
-import scala.scalajs.js
+import scala.scalajs.js.JSApp
 
-object App extends js.JSApp {
+object App extends JSApp {
 
   val baseUrl = BaseUrl(dom.window.location.href.takeWhile(_ != '#'))
 
+  // all supported URL hashes
   sealed abstract class Location(val link: String)
 
   object Location {
@@ -24,6 +26,7 @@ object App extends js.JSApp {
     def values = List[Location](UsersLocation, GroupsLocation)
   }
 
+  // configures how URLs map to components
   val routerConfig: RouterConfig[Location] = RouterConfigDsl[Location].buildConfig { dsl =>
     import dsl._
 
@@ -37,6 +40,23 @@ object App extends js.JSApp {
     val filterRoutes: Rule = Location.values.map(filterRoute).reduce(_ | _)
 
     filterRoutes.notFound(redirectToPage(Location.UsersLocation)(Redirect.Replace))
+  }.renderWith(layout)
+
+  // base layout for all pages
+  def layout(ctl: RouterCtl[Location], r: Resolution[Location]) = {
+
+    def activeIf(loc: Location) = if (r.page == loc) "active" else ""
+    val activeIfUsers = activeIf(UsersLocation)
+    val activeIfGroups = activeIf(GroupsLocation)
+
+    <.div(^.className := "container",
+      <.ul(^.className := "nav nav-tabs",
+        <.li(^.role := "presentation", ^.className := activeIfUsers, <.a(^.href := "#/users", "Users")),
+        <.li(^.role := "presentation", ^.className := activeIfGroups, <.a(^.href := "#/groups", "Groups"))
+      ),
+      // currently active module is shown in this container
+      <.div(^.className := "container", r.render())
+    )
   }
 
   val router: ReactComponentU[Unit, Resolution[Location], Any, TopNode] =
