@@ -26,3 +26,5 @@ persistLauncher in Compile := true
 persistLauncher in Test := false
 
 mainClass in Compile := Some("ch.eawag.bimgur.App")
+
+relativeSourceMaps := true

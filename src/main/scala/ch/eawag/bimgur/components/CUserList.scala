@@ -1,53 +1,58 @@
 package ch.eawag.bimgur.components
 
-import ch.eawag.bimgur.model.{User, UserList}
+import ch.eawag.bimgur.model.User
+import ch.eawag.bimgur.service.UserService
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.prefix_<^._
-import org.scalajs.dom._
-import org.scalajs.dom.ext.Ajax
-import upickle.default._
 
-import scala.concurrent.Future
+import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 object CUserList {
 
+  private var users: Option[Seq[User]] = None
+
+  case class Props(service: UserService)
+
   case class State(users: Seq[User])
 
-  class Backend($: BackendScope[Unit, State]) {
+  class Backend($: BackendScope[Props, State]) {
 
-    def loadUsers = Callback {
-      val url = "http://kermit:kermit@localhost:8090/activiti-rest/service/identity/users"
-      import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
-      val requestFuture: Future[XMLHttpRequest] = Ajax.get(url)
-      requestFuture.onSuccess { case response =>
-        val users = read[UserList](response.responseText).data
-        println("Loaded new users")
-        $.modState(s => State(users)).runNow()
-      }
-      requestFuture.onFailure { case error =>
-        println(error)
+    def lazyLoadUsers(service: UserService): Callback = {
+      users match {
+        case Some(existingUsers) => $.setState(State(existingUsers))
+        case None => updateUsers(service)
       }
     }
 
-    def render(S: State) = {
+    def updateUsers(service: UserService) = Callback {
+      for (newUsers <- service.getUsers) {
+        users = Some(newUsers)
+        $.setState(State(newUsers)).runNow()
+      }
+    }
+
+    def render(p: Props, s: State) = {
 
       def createItem(user: User) = <.li(user.firstName)
       def renderUsers(users: Seq[User]) = <.ul(users map createItem)
 
       <.div(
         <.h3("Activiti Users"),
-        renderUsers(S.users),
-        CChartD3(S.users.map(_.firstName))
+        renderUsers(s.users),
+        <.button(^.onClick --> updateUsers(p.service), "Refresh"),
+        CChartD3(s.users.map(_.firstName))
       )
     }
   }
 
-  private val component = ReactComponentB[Unit]("CUserList")
+  private val component = ReactComponentB[Props]("CUserList")
     .initialState(State(Nil))
     .renderBackend[Backend]
-    .componentDidMount(_.backend.loadUsers)
+    .componentDidMount { scope =>
+      scope.backend.lazyLoadUsers(scope.props.service)
+    }
     .build
 
-  def apply() = component()
+  def apply(userService: UserService) = component(Props(userService))
 
 }
