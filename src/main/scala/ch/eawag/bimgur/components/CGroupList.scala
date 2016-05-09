@@ -25,7 +25,7 @@ object CGroupList {
     }
 
     def updateGroups(service: GroupService) = Callback {
-      for (newGroups <- service.getGroups) {
+      for (newGroups <- service.getRandomGroups) {
         groups = Some(newGroups)
         $.setState(State(newGroups)).runNow()
       }
@@ -37,9 +37,9 @@ object CGroupList {
       def renderGroups(groups: Seq[Group]) = <.ul(groups map createItem)
 
       <.div(
-        <.h3("Activiti Groups"),
+        <.h3("Groups"),
         renderGroups(s.groups),
-        <.button(^.onClick --> updateGroups(p.service), "Refresh"),
+        <.button(^.onClick --> updateGroups(p.service), ^.role := "button", ^.className := "btn btn-default", "Refresh"),
         CChartD3(s.groups.map(_.name))
       )
     }

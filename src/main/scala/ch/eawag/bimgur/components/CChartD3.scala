@@ -3,11 +3,14 @@ package ch.eawag.bimgur.components
 import japgolly.scalajs.react.vdom.prefix_<^._
 import japgolly.scalajs.react.{BackendScope, Callback, ReactComponentB}
 import org.scalajs.dom.EventTarget
+import org.singlespaced.d3js.Ops._
 import org.singlespaced.d3js.{Selection, d3}
+
+import scala.scalajs.js.JSConverters._
 
 object CChartD3 {
 
-  case class State(selection: Option[Selection[EventTarget]])
+  case class State(svg: Option[Selection[EventTarget]])
 
   class Backend($: BackendScope[Seq[String], State]) {
     def render = <.div(^.id := "d3")
@@ -16,13 +19,31 @@ object CChartD3 {
   private val component = ReactComponentB[Seq[String]]("CChartD3")
     .initialState(State(None))
     .renderBackend[Backend]
-    .componentDidMount(scope => Callback {
-      val selection = d3.select("#d3").append("div")
-      scope.modState(s => State(Some(selection))).runNow()
+    .componentDidMount(scope => {
+      val svg = d3.select("#d3").append("div").append("svg")
+      scope.modState(s => State(Some(svg)))
+    })
+    .componentWillUnmount(scope => Callback {
+      scope.state.svg match {
+        case Some(svg) => svg.select("svg").remove()
+        case _ =>
+      }
     })
     .shouldComponentUpdate(scope => {
-      scope.nextState.selection match {
-        case Some(selection) => selection.text("Reporting via D3: " + scope.nextProps.size + " items loaded")
+      scope.nextState.svg match {
+        case Some(svg) =>
+          val circles = svg.selectAll("circle").data(scope.nextProps.toJSArray)
+
+          val color = d3.scale.category10()
+
+          circles.enter().append("circle")
+            .attr("cy", "20")
+            .attr("cx", (d: String, i: Int) => i * 25 + 10)
+            .attr("r", "10")
+
+          circles.exit().remove()
+
+          circles.style("fill", (d: String) => color(d))
         case _ =>
       }
       false

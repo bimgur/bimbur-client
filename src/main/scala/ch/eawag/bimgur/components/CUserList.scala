@@ -37,9 +37,9 @@ object CUserList {
       def renderUsers(users: Seq[User]) = <.ul(users map createItem)
 
       <.div(
-        <.h3("Activiti Users"),
+        <.h3("Users"),
         renderUsers(s.users),
-        <.button(^.onClick --> updateUsers(p.service), "Refresh"),
+        <.button(^.onClick --> updateUsers(p.service), ^.role := "button", ^.className := "btn btn-default", "Refresh"),
         CChartD3(s.users.map(_.firstName))
       )
     }

@@ -19,4 +19,10 @@ case class GroupService(activitiRestUrl: String) {
     requestFuture.map(response => read[GroupList](response.responseText).data)
   }
 
+  def getRandomGroups: Future[Seq[Group]] = {
+    val r = new scala.util.Random()
+    val groups = 0 to r.nextInt(10) map (i => Group("Group " + i))
+    Future.successful(groups)
+  }
+
 }
