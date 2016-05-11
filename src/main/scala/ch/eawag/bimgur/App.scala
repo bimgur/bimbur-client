@@ -2,7 +2,7 @@ package ch.eawag.bimgur
 
 import ch.eawag.bimgur.App.Location.{GroupsLocation, UsersLocation}
 import ch.eawag.bimgur.components.{CGroupList, CUserList}
-import ch.eawag.bimgur.service.{GroupService, UserService}
+import ch.eawag.bimgur.controller.BimgurController.BimgurCircuit
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.prefix_<^._
@@ -32,13 +32,10 @@ object App extends js.JSApp {
   val routerConfig: RouterConfig[Location] = RouterConfigDsl[Location].buildConfig { dsl =>
     import dsl._
 
-    val userListComponent = CUserList(UserService(activitiRestUrl))
-    val groupListComponent = CGroupList(GroupService(activitiRestUrl))
-
     def filterRoute(s: Location): Rule = staticRoute("#/" + s.link, s) ~> renderR(ctl => {
       s match {
-        case UsersLocation => userListComponent
-        case GroupsLocation => groupListComponent
+        case UsersLocation => BimgurCircuit.connect(_.users)(CUserList(_))
+        case GroupsLocation => BimgurCircuit.connect(_.groups)(CGroupList(_))
       }
     })
 

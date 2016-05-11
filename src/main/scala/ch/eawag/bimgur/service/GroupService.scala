@@ -13,9 +13,6 @@ case class GroupService(activitiRestUrl: String) {
 
   def getGroups: Future[Seq[Group]] = {
     val requestFuture = Ajax.get(url)
-    requestFuture.onFailure { case error =>
-      println("Loading groups failed: " + error)
-    }
     requestFuture.map(response => read[GroupList](response.responseText).data)
   }
 

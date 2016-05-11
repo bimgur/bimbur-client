@@ -1,24 +1,29 @@
-lazy val root = (project in file(".")).
-  enablePlugins(ScalaJSPlugin).
-  settings(
-    name := "Bimgur Client",
-    scalaVersion := "2.11.8",
-    version := "0.1-SNAPSHOT",
+import Settings.versions
+
+lazy val root = (project in file("."))
+    .enablePlugins(ScalaJSPlugin)
+    .settings(
+    name := Settings.name,
+    scalaVersion := Settings.versions.scala,
+    version := Settings.version,
     scalacOptions += "-feature"
   )
 
-val scalaJsReactVersion = "0.11.1"
 
 libraryDependencies ++= Seq(
-  "com.github.japgolly.scalajs-react" %%% "extra"        % scalaJsReactVersion,
+  "com.github.japgolly.scalajs-react" %%% "extra"        % versions.scalaJsReact,
   "com.lihaoyi"                       %%% "upickle"      % "0.4.0",
-  "org.singlespaced"                  %%% "scalajs-d3"   % "0.3.3"
+  "org.singlespaced"                  %%% "scalajs-d3"   % "0.3.3",
+  "me.chrons"                         %%% "diode"        % versions.diode,
+  "me.chrons"                         %%% "diode-react"  % versions.diode
 )
 
 skip in packageJSDependencies := false
 jsDependencies ++= Seq(
-  "org.webjars.bower" % "react" % "15.0.1" / "react-with-addons.js" minified "react-with-addons.min.js" commonJSName "React",
-  "org.webjars.bower" % "react" % "15.0.1" / "react-dom.js" minified "react-dom.min.js" dependsOn "react-with-addons.js" commonJSName "ReactDOM"
+  "org.webjars.bower" % "react" % versions.react / "react-with-addons.js" minified "react-with-addons.min.js" commonJSName "React",
+  "org.webjars.bower" % "react" % versions.react / "react-dom.js" minified "react-dom.min.js" dependsOn "react-with-addons.js" commonJSName "ReactDOM",
+  "org.webjars" % "jquery" % versions.jQuery / "jquery.js" minified "jquery.min.js",
+  "org.webjars" % "bootstrap" % versions.bootstrap / "bootstrap.js" minified "bootstrap.min.js" dependsOn "jquery.js"
 )
 
 persistLauncher in Compile := true

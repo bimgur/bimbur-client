@@ -13,9 +13,6 @@ case class UserService(activitiRestUrl: String) {
 
   def getUsers: Future[Seq[User]] = {
     val requestFuture = Ajax.get(url)
-    requestFuture.onFailure { case error =>
-      println("Loading users failed: " + error)
-    }
     requestFuture.map(response => read[UserList](response.responseText).data)
   }
 

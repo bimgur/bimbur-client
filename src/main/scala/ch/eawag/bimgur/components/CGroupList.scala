@@ -1,58 +1,46 @@
 package ch.eawag.bimgur.components
 
+import ch.eawag.bimgur.controller.BimgurController.UpdateGroups
 import ch.eawag.bimgur.model.Group
-import ch.eawag.bimgur.service.GroupService
+import diode.data.Pot
+import diode.react.ModelProxy
+import diode.react.ReactPot._
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.prefix_<^._
 
-import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
-
 object CGroupList {
 
-  private var groups: Option[Seq[Group]] = None
+  case class Props(proxy: ModelProxy[Pot[Seq[Group]]])
 
-  case class Props(service: GroupService)
+  class Backend($: BackendScope[Props, Unit]) {
 
-  case class State(groups: Seq[Group])
-
-  class Backend($: BackendScope[Props, State]) {
-
-    def lazyLoadGroups(service: GroupService): Callback = {
-      groups match {
-        case Some(existingGroups) => $.setState(State(existingGroups))
-        case None => updateGroups(service)
-      }
+    def lazyLoadGroups(props: Props): Callback = {
+      Callback.when(props.proxy().isEmpty)(refreshGroups(props))
     }
 
-    def updateGroups(service: GroupService) = Callback {
-      for (newGroups <- service.getRandomGroups) {
-        groups = Some(newGroups)
-        $.setState(State(newGroups)).runNow()
-      }
-    }
+    def refreshGroups(props: Props) = props.proxy.dispatch(UpdateGroups())
 
-    def render(p: Props, s: State) = {
+    def render(p: Props) = {
 
       def createItem(group: Group) = <.li(group.name)
       def renderGroups(groups: Seq[Group]) = <.ul(groups map createItem)
 
       <.div(
         <.h3("Groups"),
-        renderGroups(s.groups),
-        <.button(^.onClick --> updateGroups(p.service), ^.role := "button", ^.className := "btn btn-default", "Refresh"),
-        CChartD3(s.groups.map(_.name))
+        p.proxy().renderFailed(ex => <.div("Loading failed (Console log for details)")),
+        p.proxy().renderPending(_ > 500, _ => <.div("Loading...")),
+        p.proxy().renderReady(renderGroups),
+        <.button(^.onClick --> refreshGroups(p), ^.role := "button", ^.className := "btn btn-default", "Refresh"),
+        p.proxy().render(groups => CChartD3(groups.map(_.name)))
       )
     }
   }
 
-  private val component = ReactComponentB[Props]("CGroupList")
-    .initialState(State(Nil))
+  private val component = ReactComponentB[Props](getClass.getSimpleName)
     .renderBackend[Backend]
-    .componentDidMount { scope =>
-      scope.backend.lazyLoadGroups(scope.props.service)
-    }
+    .componentDidMount(scope => scope.backend.lazyLoadGroups(scope.props))
     .build
 
-  def apply(groupService: GroupService) = component(Props(groupService))
+  def apply(proxy: ModelProxy[Pot[Seq[Group]]]) = component(Props(proxy))
 
 }

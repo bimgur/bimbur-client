@@ -1,58 +1,46 @@
 package ch.eawag.bimgur.components
 
+import ch.eawag.bimgur.controller.BimgurController.UpdateUsers
 import ch.eawag.bimgur.model.User
-import ch.eawag.bimgur.service.UserService
+import diode.data.Pot
+import diode.react.ModelProxy
+import diode.react.ReactPot._
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.prefix_<^._
 
-import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
-
 object CUserList {
 
-  private var users: Option[Seq[User]] = None
+  case class Props(proxy: ModelProxy[Pot[Seq[User]]])
 
-  case class Props(service: UserService)
+  class Backend($: BackendScope[Props, Unit]) {
 
-  case class State(users: Seq[User])
-
-  class Backend($: BackendScope[Props, State]) {
-
-    def lazyLoadUsers(service: UserService): Callback = {
-      users match {
-        case Some(existingUsers) => $.setState(State(existingUsers))
-        case None => updateUsers(service)
-      }
+    def lazyLoadUsers(props: Props): Callback = {
+      Callback.when(props.proxy().isEmpty)(refreshUsers(props))
     }
 
-    def updateUsers(service: UserService) = Callback {
-      for (newUsers <- service.getUsers) {
-        users = Some(newUsers)
-        $.setState(State(newUsers)).runNow()
-      }
-    }
+    def refreshUsers(props: Props) = props.proxy.dispatch(UpdateUsers())
 
-    def render(p: Props, s: State) = {
+    def render(p: Props) = {
 
       def createItem(user: User) = <.li(user.firstName)
       def renderUsers(users: Seq[User]) = <.ul(users map createItem)
 
       <.div(
         <.h3("Users"),
-        renderUsers(s.users),
-        <.button(^.onClick --> updateUsers(p.service), ^.role := "button", ^.className := "btn btn-default", "Refresh"),
-        CChartD3(s.users.map(_.firstName))
+        p.proxy().renderFailed(ex => <.div("Loading failed (Console log for details)")),
+        p.proxy().renderPending(_ > 500, _ => <.div("Loading...")),
+        p.proxy().renderReady(renderUsers),
+        <.button(^.onClick --> refreshUsers(p), ^.role := "button", ^.className := "btn btn-default", "Refresh"),
+        p.proxy().render(users => CChartD3(users.map(_.firstName)))
       )
     }
   }
 
-  private val component = ReactComponentB[Props]("CUserList")
-    .initialState(State(Nil))
+  private val component = ReactComponentB[Props](getClass.getSimpleName)
     .renderBackend[Backend]
-    .componentDidMount { scope =>
-      scope.backend.lazyLoadUsers(scope.props.service)
-    }
+    .componentDidMount(scope => scope.backend.lazyLoadUsers(scope.props))
     .build
 
-  def apply(userService: UserService) = component(Props(userService))
+  def apply(proxy: ModelProxy[Pot[Seq[User]]]) = component(Props(proxy))
 
 }
