@@ -1,0 +1,121 @@
+# Bimgur
+
+An Activiti-based workflow application to process bacterial images.
+
+## Architecture
+
+Bimgur uses a three-tier architecture:
+
+* PostgreSQL Database
+* Apache Tomcat Server
+* Web Frontend
+
+Two web applications are available:
+
+* *Activiti Explorer*: Allows to _administrate_ workflows and users
+* *Bimgur*: Allows to _execute_ workflows (i.e. start processes, work on tasks, etc)
+
+Activiti Explorer is an application provided out-of-the-box by the http://activiti.org[Activiti project].
+Bimgur is a Scala.js application whose code is contained in this repository.
+Both, Activiti Explorer and Bimgur, connect to the same PostgreSQL database.
+Bimgur uses the Activiti REST layer to do so.
+
+## Development Setup
+
+Installing a server, a database, and multiple frontend components can be tedious.
+To simplify things, https://www.docker.com[Docker] allows to create a virtualized installation via script.
+The script is called `Dockerfile` and contains all necessary steps:
+
+* Installs PostgreSQL
+* Installs Tomcat
+* Deploys Activiti Explorer (from war)
+* Deploys Activiti REST (from war)
+* Live-Links Bimgur Scala.js (using docker volumes to directly access compiled code in this repo)
+
+For the last step to be possible, the bimgur Scala.js application first needs to be compiled:
+
+### Compile Bimgur Scala.js
+
+#### Install Prerequisites
+
+* Java SE Development Kit 8
+
+```
+brew install caskroom/cask/brew-cask
+brew install cask java
+```
+
+* Scala Build Tool (SBT)
+
+`brew install sbt`
+
+NOTE: No need to install a Scala compiler (will be managed by sbt)
+
+#### Compile Bimgur via SBT
+
+From the root directory (where this README is contained):
+
+```
+sbt ~fastOptJS
+```
+
+The tilde `~` makes sure that compilation is running continuously.
+Any source changes will then be picked up immediately.
+
+### Deploy Docker Container
+
+#### Install Docker Machine
+
+http://stackoverflow.com/questions/32744780/install-docker-toolbox-on-a-mac-via-command-line[OSX via Homebrew]:
+
+```
+# Install Cask
+brew install caskroom/cask/brew-cask
+
+# Install docker toolbox
+brew cask install dockertoolbox
+
+# Create the docker machine
+docker-machine create --driver "virtualbox" default
+
+# Start the docker machine
+docker-machine start default
+
+# Allows the docker commands to be used in the terminal
+docker-machine env
+```
+
+For other options: https://docs.docker.com/machine/get-started
+
+#### Run Activiti Docker Container
+
+##### Build an image
+
+```
+docker build --tag=bimgur .
+```
+
+##### Run a previously built image
+
+```
+docker run -it -p 8080:8080 -v -v /local/path/to/bimgur:/usr/local/tomcat/webapps/bimgur bimgur
+```
+
+WARNING: The local path *must* be specified as an absolute path
+
+### Access Bimgur Web Applications
+
+Both applications can be accessed through any browser:
+
+```
+http://localhost:8080/activiti-explorer
+http://localhost:8080/bimgur/index-dev.html
+```
+
+WARNING: On OSX, `localhost` will not work. Run `docker-machine ip` to find out your docker host IP.
+
+The following demo users exist for testing:
+
+* kermit/kermit (Admin)
+* gonzo/gonzo (Manager)
+* fozzie/fozzie (User)

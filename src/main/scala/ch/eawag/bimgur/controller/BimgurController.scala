@@ -10,7 +10,7 @@ import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 object BimgurController {
 
-  val activitiRestUrl = "http://kermit:kermit@localhost:8090/activiti-rest/service"
+  val activitiRestUrl = "http://kermit:kermit@192.168.99.100:8080/activiti-rest/service"
   val userService = UserService(activitiRestUrl)
   val groupService = GroupService(activitiRestUrl)
 

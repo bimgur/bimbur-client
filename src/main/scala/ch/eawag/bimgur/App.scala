@@ -14,7 +14,6 @@ import scala.scalajs.js
 object App extends js.JSApp {
 
   val baseUrl = BaseUrl(dom.window.location.href.takeWhile(_ != '#'))
-  val activitiRestUrl = "http://kermit:kermit@localhost:8090/activiti-rest/service"
 
   // all supported URL hashes
   sealed abstract class Location(val link: String)
