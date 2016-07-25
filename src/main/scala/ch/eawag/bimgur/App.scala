@@ -32,10 +32,13 @@ object App extends js.JSApp {
   val routerConfig: RouterConfig[Location] = RouterConfigDsl[Location].buildConfig { dsl =>
     import dsl._
 
+    val userConnection = BimgurCircuit.connect(_.users)
+    val groupConnection = BimgurCircuit.connect(_.groups)
+
     def filterRoute(s: Location): Rule = staticRoute("#/" + s.link, s) ~> renderR(ctl => {
       s match {
-        case UsersLocation => BimgurCircuit.connect(_.users)(CUserList(_))
-        case GroupsLocation => BimgurCircuit.connect(_.groups)(CGroupList(_))
+        case UsersLocation => userConnection(CUserList(_))
+        case GroupsLocation => groupConnection(CGroupList(_))
       }
     })
 

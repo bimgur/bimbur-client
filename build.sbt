@@ -1,35 +1,24 @@
-import Settings.versions
-
 lazy val root = (project in file("."))
-    .enablePlugins(ScalaJSPlugin)
-    .settings(
+  .enablePlugins(ScalaJSPlugin)
+  .settings(
     name := Settings.name,
     scalaVersion := Settings.versions.scala,
     version := Settings.version,
-    scalacOptions += "-feature"
+    scalacOptions ++= Settings.scalacOptions
   )
 
+// dependencies needed by Scala.js
+libraryDependencies ++= Settings.libraryDependencies.value
 
-libraryDependencies ++= Seq(
-  "com.github.japgolly.scalajs-react" %%% "extra"        % versions.scalaJsReact,
-  "com.lihaoyi"                       %%% "upickle"      % "0.4.0",
-  "org.singlespaced"                  %%% "scalajs-d3"   % "0.3.3",
-  "me.chrons"                         %%% "diode"        % versions.diode,
-  "me.chrons"                         %%% "diode-react"  % versions.diode
-)
+// JS dependencies needed at runtime
+jsDependencies ++= Settings.jsDependencies.value
 
+// yes, we want to package JS dependencies
 skip in packageJSDependencies := false
-jsDependencies ++= Seq(
-  "org.webjars.bower" % "react" % versions.react / "react-with-addons.js" minified "react-with-addons.min.js" commonJSName "React",
-  "org.webjars.bower" % "react" % versions.react / "react-dom.js" minified "react-dom.min.js" dependsOn "react-with-addons.js" commonJSName "ReactDOM",
-  "org.webjars" % "jquery" % versions.jQuery / "jquery.js" minified "jquery.min.js",
-  "org.webjars" % "bootstrap" % versions.bootstrap / "bootstrap.js" minified "bootstrap.min.js" dependsOn "jquery.js"
-)
 
-persistLauncher in Compile := true
-
+// use launcher code to start the client app (see launcher.js in index.html)
+persistLauncher := true
 persistLauncher in Test := false
 
-mainClass in Compile := Some("ch.eawag.bimgur.App")
-
+// make the referenced paths on source maps relative to target path
 relativeSourceMaps := true
