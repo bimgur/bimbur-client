@@ -1,7 +1,7 @@
-package ch.eawag.bimgur.components
+package ch.fhnw.ima.bimgur.components
 
-import ch.eawag.bimgur.controller.BimgurController.UpdateUsers
-import ch.eawag.bimgur.model.User
+import ch.fhnw.ima.bimgur.controller.BimgurController.UpdateUsers
+import ch.fhnw.ima.bimgur.model.User
 import diode.data.Pot
 import diode.react.ModelProxy
 import diode.react.ReactPot._

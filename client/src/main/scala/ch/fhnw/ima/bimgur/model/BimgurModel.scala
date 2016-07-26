@@ -1,4 +1,4 @@
-package ch.eawag.bimgur.model
+package ch.fhnw.ima.bimgur.model
 
 import diode.data.Pot
 

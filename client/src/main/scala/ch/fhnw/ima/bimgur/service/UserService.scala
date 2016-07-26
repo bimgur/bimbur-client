@@ -1,6 +1,6 @@
-package ch.eawag.bimgur.service
+package ch.fhnw.ima.bimgur.service
 
-import ch.eawag.bimgur.model.{User, UserList}
+import ch.fhnw.ima.bimgur.model.{User, UserList}
 import org.scalajs.dom.ext.Ajax
 import upickle.default._
 

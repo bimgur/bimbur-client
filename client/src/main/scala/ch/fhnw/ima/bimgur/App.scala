@@ -1,8 +1,9 @@
-package ch.eawag.bimgur
+package ch.fhnw.ima.bimgur
 
-import ch.eawag.bimgur.App.Location.{GroupsLocation, UsersLocation}
-import ch.eawag.bimgur.components.{CGroupList, CUserList}
-import ch.eawag.bimgur.controller.BimgurController.BimgurCircuit
+import ch.fhnw.ima.bimgur.components.CUserList
+import ch.fhnw.ima.bimgur.App.Location.{GroupsLocation, UsersLocation}
+import ch.fhnw.ima.bimgur.components.CGroupList
+import ch.fhnw.ima.bimgur.controller.BimgurController.BimgurCircuit
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.prefix_<^._

@@ -28,13 +28,15 @@ The script is called `Dockerfile` and contains all necessary steps:
 
 * Installs PostgreSQL
 * Installs Tomcat
-* Deploys Activiti Explorer (from war)
-* Deploys Activiti REST (from war)
-* Live-Links Bimgur Scala.js (using docker volumes to directly access compiled code in this repo)
+* Deploys Activiti Explorer
+* Deploys Activiti REST
+* Add custom Activiti code (to Explorer and REST app)
+* Live-Links Bimgur Scala.js Client (using docker volumes to directly access compiled code in this repo)
 
-For the last step to be possible, the bimgur Scala.js application first needs to be compiled:
+For all these steps to succeed, the necessary artifacts first need to be compiled.
+The Scala Build Tool (SBT) is used for this purpose: A custom `dockerize` command encapsulates all necessary tasks.
 
-### Compile Bimgur Scala.js
+### Compile Artifacts
 
 #### Install Prerequisites
 
@@ -51,16 +53,13 @@ brew install cask java
 
 NOTE: No need to install a Scala compiler (will be managed by sbt)
 
-#### Compile Bimgur via SBT
+#### Compile Bimgur Artifacts via SBT
 
 From the root directory (where this README is contained):
 
 ```
-sbt ~fastOptJS
+sbt dockerize
 ```
-
-The tilde `~` makes sure that compilation is running continuously.
-Any source changes will then be picked up immediately.
 
 ### Deploy Docker Container
 
@@ -98,7 +97,7 @@ docker build --tag=bimgur .
 ##### Run a previously built image
 
 ```
-docker run -it -p 8080:8080 -v -v /local/path/to/bimgur:/usr/local/tomcat/webapps/bimgur bimgur
+docker run -it -p 8080:8080 -v -v /local/path/to/bimgur/client:/usr/local/tomcat/webapps/bimgur bimgur
 ```
 
 WARNING: The local path *must* be specified as an absolute path
@@ -119,3 +118,13 @@ The following demo users exist for testing:
 * kermit/kermit (Admin)
 * gonzo/gonzo (Manager)
 * fozzie/fozzie (User)
+
+### Continuous Compilation
+
+While working on the Scala.js client, continuous compilation makes all changes available immediately:
+
+```
+sbt ~fastOptJS
+```
+
+NOTE: Because all client files are mapped via a docker volume, there's no need to re-start the container.

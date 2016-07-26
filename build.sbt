@@ -1,24 +1,51 @@
-lazy val root = (project in file("."))
-  .enablePlugins(ScalaJSPlugin)
+import org.scalajs.sbtplugin.ScalaJSPlugin.AutoImport._
+
+// Sub-project containing Activiti customizations (e.g. code behind service tasks)
+lazy val activitiCustom = Project(id = "activiti-custom", base = file("activiti-custom"))
   .settings(
-    name := Settings.name,
-    scalaVersion := Settings.versions.scala,
+    name := Settings.activitiCustomName,
     version := Settings.version,
-    scalacOptions ++= Settings.scalacOptions
+    scalaVersion := Settings.versions.scala,
+    scalacOptions ++= Settings.scalacOptions,
+    libraryDependencies ++= Settings.activitiDependencies.value
   )
 
-// dependencies needed by Scala.js
-libraryDependencies ++= Settings.libraryDependencies.value
+// Sub-project containing Scala.js client web application
+lazy val client = (project in file("client"))
+  .enablePlugins(ScalaJSPlugin)
+  .settings(
+    name := Settings.clientName,
+    version := Settings.version,
+    scalaVersion := Settings.versions.scala,
+    scalacOptions ++= Settings.scalacOptions,
 
-// JS dependencies needed at runtime
-jsDependencies ++= Settings.jsDependencies.value
+    // Scala.js dependencies
+    libraryDependencies ++= Settings.clientDependencies.value,
 
-// yes, we want to package JS dependencies
-skip in packageJSDependencies := false
+    // JS dependencies needed at runtime
+    jsDependencies ++= Settings.clientJsDependencies.value,
 
-// use launcher code to start the client app (see launcher.js in index.html)
-persistLauncher := true
-persistLauncher in Test := false
+    // yes, we want to package JS dependencies
+    skip in packageJSDependencies := false,
 
-// make the referenced paths on source maps relative to target path
-relativeSourceMaps := true
+    // use launcher code to start the client app (see launcher.js in index.html)
+    persistLauncher := true,
+    persistLauncher in Test := false,
+
+    // make referenced paths in source maps relative to target path
+    relativeSourceMaps := true
+  )
+
+// Root project contains no sources, but hosts our custom command
+lazy val root = project.in(file("."))
+  .settings(
+    commands += dockerize
+  )
+
+// Custom command which prepares all artifacts necessary to build our docker image
+lazy val dockerize = Command.command("dockerize") {
+  state =>
+    "activiti-custom/package" ::
+      "client/fastOptJS" ::
+      state
+}

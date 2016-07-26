@@ -1,4 +1,4 @@
-package ch.eawag.bimgur.components
+package ch.fhnw.ima.bimgur.components
 
 import japgolly.scalajs.react.vdom.prefix_<^._
 import japgolly.scalajs.react.{BackendScope, Callback, ReactComponentB}

@@ -8,7 +8,7 @@
 # Running a tagged image
 # -----------------------------------------------------------------------------
 #
-# `docker run -it -p 8080:8080 -v -v /local/path/to/bimgur:/usr/local/tomcat/webapps/bimgur bimgur`
+# `docker run -it -p 8080:8080 -v -v /local/path/to/bimgur/client:/usr/local/tomcat/webapps/bimgur bimgur`
 #
 # -----------------------------------------------------------------------------
 # Connecting via browser
@@ -62,6 +62,7 @@ RUN unzip /tmp/activiti-explorer-*.war -d /usr/local/tomcat/webapps/activiti-exp
 ADD server/activiti/db.properties /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/classes/
 ADD server/activiti/engine.properties /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/classes/
 ADD server/postgres/postgres*.jar /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/lib/
+ADD activiti-custom/target/scala-2.11/bimgur-activiti-custom*.jar /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/lib/
 
 # -----------------------------------------------------------------------------
 # Activiti REST
@@ -72,12 +73,7 @@ RUN unzip /tmp/activiti-rest-*.war -d /usr/local/tomcat/webapps/activiti-rest
 ADD server/activiti/db.properties /usr/local/tomcat/webapps/activiti-rest/WEB-INF/classes/
 ADD server/activiti/engine.properties /usr/local/tomcat/webapps/activiti-rest/WEB-INF/classes/
 ADD server/postgres/postgres*.jar /usr/local/tomcat/webapps/activiti-rest/WEB-INF/lib/
-
-# -----------------------------------------------------------------------------
-# Bimgur Webapp (contents added via docker volume)
-# -----------------------------------------------------------------------------
-
-RUN mkdir /usr/local/tomcat/webapps/bimgur
+ADD activiti-custom/target/scala-2.11/bimgur-activiti-custom*.jar /usr/local/tomcat/webapps/activiti-rest/WEB-INF/lib/
 
 # -----------------------------------------------------------------------------
 # Three, two, one -- GO! :-)

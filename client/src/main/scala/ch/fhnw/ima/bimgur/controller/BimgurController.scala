@@ -1,7 +1,7 @@
-package ch.eawag.bimgur.controller
+package ch.fhnw.ima.bimgur.controller
 
-import ch.eawag.bimgur.model.{BimgurModel, Group, User}
-import ch.eawag.bimgur.service.{GroupService, UserService}
+import ch.fhnw.ima.bimgur.model.{BimgurModel, Group, User}
+import ch.fhnw.ima.bimgur.service.{GroupService, UserService}
 import diode._
 import diode.data._
 import diode.react.ReactConnector
