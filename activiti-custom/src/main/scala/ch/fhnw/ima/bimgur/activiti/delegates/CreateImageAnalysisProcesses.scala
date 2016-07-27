@@ -1,4 +1,4 @@
-package ch.fhnw.ima.bimgur.activiti
+package ch.fhnw.ima.bimgur.activiti.delegates
 
 import org.activiti.engine.delegate.{DelegateExecution, JavaDelegate}
 import org.slf4j.LoggerFactory
