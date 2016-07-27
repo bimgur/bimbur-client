@@ -31,7 +31,10 @@ The script is called `Dockerfile` and contains all necessary steps:
 * Deploys Activiti Explorer
 * Deploys Activiti REST
 * Add custom Activiti code (to Explorer and REST app)
-* Live-Links Bimgur Scala.js Client (using docker volumes to directly access compiled code in this repo)
+
+In the end we will have a neat bundle called a _docker image_.
+We will then create an instance of this image (called a container) and mount all Bimgur Scala.js client artifacts into it.
+These static files will then be served via Tomcat.
 
 For all these steps to succeed, the necessary artifacts first need to be compiled.
 The Scala Build Tool (SBT) is used for this purpose: A custom `dockerize` command encapsulates all necessary tasks.
@@ -86,15 +89,36 @@ docker-machine env
 
 For other options: https://docs.docker.com/machine/get-started
 
-#### Run Activiti Docker Container
+#### Activate NFS on Docker Machine
 
-##### Build an image
+During development, it is convenient to mount Scala.js artifacts into the docker container (details below).
+This allows to see any changes through a simple browser refresh, without any re-deployments.
+Unfortunately, docker mounts are problematic on any non-Linux OS because of the underlying "vboxfs" filesystem.
+Often, files are not synchronized properly, and are truncated when accessed via Tomcat.
+
+As an alternative, docker-machine can be configured to use NFS:
+
+```
+brew install docker-machine-nfs
+docker-machine-nfs default
+```
+
+See https://github.com/adlogix/docker-machine-nfs for details.
+
+#### Run Bimgur Docker Container
+
+Creating a docker container is a two step process:
+
+* Building an image
+* Running a container (i.e. an instance of a pre-built image)
+
+##### Build image
 
 ```
 docker build --tag=bimgur .
 ```
 
-##### Run a previously built image
+##### Run container
 
 ```
 docker run -it -p 8080:8080 -v -v /local/path/to/bimgur/client:/usr/local/tomcat/webapps/bimgur bimgur
