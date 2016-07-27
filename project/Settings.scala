@@ -26,8 +26,7 @@ object Settings {
     // client Scala.JS libraries
     val scalaJsReact = "0.11.1"
     val diode = "1.0.0"
-    val upickle = "0.4.0"
-    val d3 = "0.3.3"
+    val upickle = "0.4.1"
 
     // client JS dependencies
     val react = "15.2.1"
@@ -44,7 +43,6 @@ object Settings {
   val clientDependencies = Def.setting(Seq(
     "com.github.japgolly.scalajs-react" %%% "extra" % versions.scalaJsReact,
     "com.lihaoyi" %%% "upickle" % versions.upickle,
-    "org.singlespaced" %%% "scalajs-d3"   % versions.d3,
     "me.chrons" %%% "diode" % versions.diode,
     "me.chrons" %%% "diode-react" % versions.diode
   ))
