@@ -37,7 +37,7 @@ lazy val client = (project in file("client"))
   )
 
 // Root project contains no sources, but hosts our custom command
-lazy val root = project.in(file("."))
+lazy val root = Project(id = "bimgur", base = file("."))
   .aggregate(activitiCustom, client)
   .settings(
     commands += dockerize
