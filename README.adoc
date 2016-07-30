@@ -75,7 +75,7 @@ http://stackoverflow.com/questions/32744780/install-docker-toolbox-on-a-mac-via-
 brew install caskroom/cask/brew-cask
 
 # Install docker toolbox
-brew cask install dockertoolbox
+brew cask install docker-toolbox
 
 # Create the docker machine
 docker-machine create --driver "virtualbox" default
