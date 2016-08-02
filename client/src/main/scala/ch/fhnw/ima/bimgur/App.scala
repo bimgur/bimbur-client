@@ -24,13 +24,14 @@ object App extends js.JSApp {
     import dsl._
 
     // re-usable connections to controller
+    val masterFormDataModelConnection = BimgurCircuit.connect(_.masterFormData)
     val analysesModelConnection = BimgurCircuit.connect(_.analyses)
 
     // defines how hash-prefixed locations are mapped to a rendered component
     def filterRoute(page: Page): Rule = staticRoute("#/" + page.hashLink, page) ~> renderR(ctl => {
       page match {
         case AnalysesPage => analysesModelConnection(AnalysesPageComponent(_))
-        case NewAnalysisPage => NewAnalysisPageComponent()
+        case NewAnalysisPage => masterFormDataModelConnection(NewAnalysisPageComponent(_))
       }
     })
 

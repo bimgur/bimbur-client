@@ -1,17 +1,44 @@
 package ch.fhnw.ima.bimgur.component
 
 import ch.fhnw.ima.bimgur.component.pages.Page
-import japgolly.scalajs.react.ReactComponentB
+import ch.fhnw.ima.bimgur.controller.BimgurController.UpdateMasterFormData
+import ch.fhnw.ima.bimgur.model.activiti._
+import diode.data.Pot
+import diode.react.ModelProxy
+import diode.react.ReactPot._
+import japgolly.scalajs.react.{Callback, _}
 import japgolly.scalajs.react.vdom.prefix_<^._
 
 object NewAnalysisPageComponent {
 
-  private val component = ReactComponentB[Unit](NewAnalysisPageComponent.getClass.getSimpleName)
-    .render($ => <.div(
-      <.h3(Page.NewAnalysisPage.pageTitle),
-      TodoComponent()))
+  case class Props(proxy: ModelProxy[Pot[FormData]])
+
+  class Backend($: BackendScope[Props, Unit]) {
+
+    def lazyLoadMasterFormData(props: Props): Callback = {
+      Callback.when(props.proxy().isEmpty)(refreshMasterFormData(props))
+    }
+
+    def refreshMasterFormData(props: Props) = props.proxy.dispatch(UpdateMasterFormData())
+
+    def renderMasterFormData(formData: FormData) = <.div(formData.formProperties.toString())
+
+    def render(p: Props) = {
+      <.div(
+        <.h3(Page.NewAnalysisPage.pageTitle),
+        p.proxy().renderFailed(ex => <.div("Loading failed (Console log for details)")),
+        p.proxy().renderPending(_ > 500, _ => <.div("Loading...")),
+        p.proxy().renderReady(renderMasterFormData)
+      )
+    }
+
+  }
+
+  private val component = ReactComponentB[Props](getClass.getSimpleName)
+    .renderBackend[Backend]
+    .componentDidMount(scope => scope.backend.lazyLoadMasterFormData(scope.props))
     .build
 
-  def apply() = component()
+  def apply(proxy: ModelProxy[Pot[FormData]]) = component(Props(proxy))
 
 }

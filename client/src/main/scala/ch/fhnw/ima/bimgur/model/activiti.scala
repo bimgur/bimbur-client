@@ -6,9 +6,13 @@ import io.circe.Decoder
 
 object activiti {
 
-  // Type-Safe Activiti Ids
+  val MasterWorkflowKey: ProcessDefinitionKey = "bimgur-master"
+
+  // Type-Safe Activiti Ids & Aliases
 
   type ProcessDefinitionId = String
+  type ProcessDefinitionKey = String
+
   type ProcessInstanceId = String
 
   // Translate between Activiti and Bimgur Lingo
@@ -16,6 +20,10 @@ object activiti {
   type Analysis = ProcessInstance
 
   // Activiti REST DTOs
+
+  final case class ProcessDefinitionList(data: Seq[ProcessDefinition])
+
+  final case class ProcessDefinition(id: ProcessDefinitionId, key: ProcessDefinitionKey)
 
   final case class ProcessInstanceList(data: Seq[ProcessInstance])
 

@@ -1,7 +1,7 @@
 package ch.fhnw.ima.bimgur
 package model
 
-import ch.fhnw.ima.bimgur.model.activiti.Analysis
+import ch.fhnw.ima.bimgur.model.activiti.{Analysis, FormData}
 import diode.data.Pot
 
-case class BimgurModel(analyses: Pot[Seq[Analysis]])
+case class BimgurModel(masterFormData: Pot[FormData], analyses: Pot[Seq[Analysis]])
