@@ -1,14 +1,18 @@
 package ch.fhnw.ima.bimgur
 package component
 
+import ch.fhnw.ima.bimgur.component.bootstrap.Button
 import ch.fhnw.ima.bimgur.component.pages.Page
 import ch.fhnw.ima.bimgur.controller.BimgurController.UpdateAnalyses
 import ch.fhnw.ima.bimgur.model.activiti.{Analysis, Variable}
+import ch.fhnw.ima.bimgur.style.GlobalStyles
 import diode.data.Pot
 import diode.react.ModelProxy
 import diode.react.ReactPot._
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.prefix_<^._
+
+import scalacss.ScalaCssReact._
 
 object AnalysesPageComponent {
 
@@ -24,8 +28,10 @@ object AnalysesPageComponent {
 
     def render(p: Props) = {
 
+      val css = GlobalStyles
+
       def renderAnalysis(analysis: Seq[Analysis]) =
-        <.table(^.`class` := "table",
+        <.table(css.table,
           <.thead(renderHeaderRow),
           <.tbody(analysis map renderAnalysisRow)
         )
@@ -48,7 +54,7 @@ object AnalysesPageComponent {
         p.proxy().renderFailed(ex => <.div("Loading failed (Console log for details)")),
         p.proxy().renderPending(_ > 500, _ => <.div("Loading...")),
         p.proxy().renderReady(renderAnalysis),
-        <.button(^.onClick --> refreshAnalyses(p), ^.role := "button", ^.className := "btn btn-default", "Refresh")
+        Button(refreshAnalyses(p), "Refresh")
       )
     }
   }

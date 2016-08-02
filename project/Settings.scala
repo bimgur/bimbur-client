@@ -25,6 +25,7 @@ object Settings {
 
     // client Scala.JS libraries
     val scalaJsReact = "0.11.1"
+    val scalaCSS = "0.4.1"
     val diode = "1.0.0"
     val circe = "0.5.0-M2"
 
@@ -42,6 +43,7 @@ object Settings {
 
   val clientDependencies = Def.setting(Seq(
     "com.github.japgolly.scalajs-react" %%% "extra" % versions.scalaJsReact,
+    "com.github.japgolly.scalacss" %%% "ext-react" % versions.scalaCSS,
     "me.chrons" %%% "diode" % versions.diode,
     "me.chrons" %%% "diode-react" % versions.diode,
     "io.circe" %%% "circe-scalajs" % versions.circe,

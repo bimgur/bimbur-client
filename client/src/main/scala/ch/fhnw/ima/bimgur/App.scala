@@ -4,6 +4,7 @@ import ch.fhnw.ima.bimgur.component.pages.Page
 import ch.fhnw.ima.bimgur.component.pages.Page._
 import ch.fhnw.ima.bimgur.component.{AnalysesPageComponent, NewAnalysisPageComponent}
 import ch.fhnw.ima.bimgur.controller.BimgurController.BimgurCircuit
+import ch.fhnw.ima.bimgur.style.GlobalStyles
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router._
 import japgolly.scalajs.react.vdom.prefix_<^._
@@ -11,6 +12,8 @@ import org.scalajs.dom
 import org.scalajs.dom.document
 
 import scala.scalajs.js
+import scalacss.Defaults._
+import scalacss.ScalaCssReact._
 
 object App extends js.JSApp {
 
@@ -39,19 +42,25 @@ object App extends js.JSApp {
   // base layout for all pages
   def layout(ctl: RouterCtl[Page], r: Resolution[Page]) = {
 
-    def activeIf(loc: Page) = if (r.page == loc) "active" else ""
-    <.div(^.className := "container",
-      <.ul(^.className := "nav nav-tabs",
+    // globally defined CSS styles
+    val css = GlobalStyles
+
+    def activeIf(loc: Page) = if (r.page == loc) css.active else css.nonActive
+
+    <.div(css.container,
+      <.ul(css.navTabs,
         Page.pages.map { page =>
-          <.li(^.role := "presentation", ^.className := activeIf(page), <.a(^.href := s"#/${page.hashLink}", page.tabName))
+          <.li(activeIf(page), <.a(^.href := s"#/${page.hashLink}", page.tabName))
         }
       ),
       // currently active module is shown in this container
-      <.div(^.className := "container", r.render())
+      <.div(r.render())
     )
   }
 
   def main() = {
+    // create stylesheet
+    GlobalStyles.addToDocument()
     // create the router component (which knows what to render based on defined rules > see routerConfig above)
     val router = Router(baseUrl, routerConfig.logToConsole)()
     // actually render the router component
