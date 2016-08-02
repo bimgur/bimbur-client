@@ -1,6 +1,7 @@
 package ch.fhnw.ima.bimgur
 package component
 
+import ch.fhnw.ima.bimgur.component.pages.Page
 import ch.fhnw.ima.bimgur.controller.BimgurController.UpdateAnalyses
 import ch.fhnw.ima.bimgur.model.activiti.{Analysis, Variable}
 import diode.data.Pot
@@ -9,7 +10,7 @@ import diode.react.ReactPot._
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.prefix_<^._
 
-object AnalysesPage {
+object AnalysesPageComponent {
 
   case class Props(proxy: ModelProxy[Pot[Seq[Analysis]]])
 
@@ -43,7 +44,7 @@ object AnalysesPage {
       }
 
       <.div(
-        <.h3("Running Analyses"),
+        <.h3(Page.AnalysesPage.pageTitle),
         p.proxy().renderFailed(ex => <.div("Loading failed (Console log for details)")),
         p.proxy().renderPending(_ > 500, _ => <.div("Loading...")),
         p.proxy().renderReady(renderAnalysis),
