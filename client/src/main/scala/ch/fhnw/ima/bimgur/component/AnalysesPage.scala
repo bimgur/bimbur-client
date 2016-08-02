@@ -1,7 +1,8 @@
-package ch.fhnw.ima.bimgur.component
+package ch.fhnw.ima.bimgur
+package component
 
 import ch.fhnw.ima.bimgur.controller.BimgurController.UpdateAnalyses
-import ch.fhnw.ima.bimgur.model.activiti.Analysis
+import ch.fhnw.ima.bimgur.model.activiti.{Analysis, Variable}
 import diode.data.Pot
 import diode.react.ModelProxy
 import diode.react.ReactPot._
@@ -22,11 +23,27 @@ object AnalysesPage {
 
     def render(p: Props) = {
 
-      def createItem(analysis: Analysis) = <.li(analysis.id)
-      def renderAnalysis(analysis: Seq[Analysis]) = <.ul(analysis map createItem)
+      def renderAnalysis(analysis: Seq[Analysis]) =
+        <.table(^.`class` := "table",
+          <.thead(renderHeaderRow),
+          <.tbody(analysis map renderAnalysisRow)
+        )
+
+      def renderHeaderRow = <.tr(<.th("Id"), <.th("Variables"))
+
+      def renderAnalysisRow(analysis: Analysis) =
+        <.tr(
+          <.td(analysis.id),
+          <.td(renderVariables(analysis.variables))
+        )
+
+      def renderVariables(variables: Seq[Variable]) = {
+        val nameAndValueSeq = variables map (v => s"${v.name}: ${v.value.value}")
+        nameAndValueSeq.mkString(", ")
+      }
 
       <.div(
-        <.h3("Analyses"),
+        <.h3("Running Analyses"),
         p.proxy().renderFailed(ex => <.div("Loading failed (Console log for details)")),
         p.proxy().renderPending(_ > 500, _ => <.div("Loading...")),
         p.proxy().renderReady(renderAnalysis),
