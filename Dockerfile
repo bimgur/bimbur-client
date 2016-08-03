@@ -62,7 +62,7 @@ RUN unzip /tmp/activiti-explorer-*.war -d /usr/local/tomcat/webapps/activiti-exp
 ADD server/activiti/db.properties /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/classes/
 ADD server/activiti/engine.properties /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/classes/
 ADD server/postgres/postgres*.jar /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/lib/
-ADD activiti-custom/target/scala-2.11/bimgur-activiti-custom*.jar /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/lib/
+ADD activiti-custom/target/pack/lib/*.jar /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/lib/
 
 # -----------------------------------------------------------------------------
 # Activiti REST
@@ -74,7 +74,7 @@ ADD server/activiti/activiti-rest-web.xml /usr/local/tomcat/webapps/activiti-res
 ADD server/activiti/db.properties /usr/local/tomcat/webapps/activiti-rest/WEB-INF/classes/
 ADD server/activiti/engine.properties /usr/local/tomcat/webapps/activiti-rest/WEB-INF/classes/
 ADD server/postgres/postgres*.jar /usr/local/tomcat/webapps/activiti-rest/WEB-INF/lib/
-ADD activiti-custom/target/scala-2.11/bimgur-activiti-custom*.jar /usr/local/tomcat/webapps/activiti-rest/WEB-INF/lib/
+ADD activiti-custom/target/pack/lib/*.jar /usr/local/tomcat/webapps/activiti-rest/WEB-INF/lib/
 
 # -----------------------------------------------------------------------------
 # Three, two, one -- GO! :-)

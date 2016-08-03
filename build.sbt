@@ -7,8 +7,9 @@ lazy val activitiCustom = Project(id = "activiti-custom", base = file("activiti-
     version := Settings.version,
     scalaVersion := Settings.versions.scala,
     scalacOptions ++= Settings.scalacOptions,
-    libraryDependencies ++= Settings.activitiCustomDependencies.value
-  )
+    libraryDependencies ++= Settings.activitiCustomDependencies.value,
+    packAutoSettings
+)
 
 // Sub-project containing Scala.js client web application
 lazy val client = (project in file("client"))
@@ -45,5 +46,5 @@ lazy val root = Project(id = "bimgur", base = file("."))
 
 // Custom command which prepares all artifacts necessary to build our docker image
 lazy val dockerize = Command.command("dockerize") {
-  state => "package" :: "client/fastOptJS" :: state
+  state => "package" :: "activiti-custom/pack":: "client/fastOptJS" :: state
 }
