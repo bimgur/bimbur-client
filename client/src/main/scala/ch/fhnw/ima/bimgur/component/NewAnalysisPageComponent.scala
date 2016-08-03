@@ -21,14 +21,12 @@ object NewAnalysisPageComponent {
 
     def refreshMasterFormData(props: Props) = props.proxy.dispatch(UpdateMasterFormData())
 
-    def renderMasterFormData(formData: FormData) = <.div(formData.formProperties.toString())
-
     def render(p: Props) = {
       <.div(
         <.h3(Page.NewAnalysisPage.pageTitle),
         p.proxy().renderFailed(ex => <.div("Loading failed (Console log for details)")),
         p.proxy().renderPending(_ > 500, _ => <.div("Loading...")),
-        p.proxy().renderReady(renderMasterFormData)
+        p.proxy().renderReady(FormDataComponent(_))
       )
     }
 

@@ -12,8 +12,9 @@ object activiti {
 
   type ProcessDefinitionId = String
   type ProcessDefinitionKey = String
-
   type ProcessInstanceId = String
+  type VariableId = String
+  type FormPropertyId = String
 
   // Translate between Activiti and Bimgur Lingo
 
@@ -29,11 +30,7 @@ object activiti {
 
   final case class ProcessInstance(id: ProcessInstanceId, processDefinitionId: ProcessDefinitionId, variables: Seq[Variable])
 
-  final case class FormData(processDefinitionId: ProcessDefinitionId, formProperties: Seq[FormProperty])
-
-  final case class FormProperty(name: String)
-
-  final case class Variable(name: String, `type`: String, value: VariableValue)
+  final case class Variable(id: VariableId, name: String, `type`: String, value: VariableValue)
 
   object Variable {
 
@@ -75,10 +72,11 @@ object activiti {
       }
 
       for {
+        id <- c.downField("id").as[String]
         name <- c.downField("name").as[String]
         t <- `type`
         vv <- variableValue
-      } yield Variable(name, t, vv)
+      } yield Variable(id, name, t, vv)
 
     }
     )
@@ -109,6 +107,19 @@ object activiti {
   final case class UnsupportedVariableValue(missingType: String) extends VariableValue {
     type Value = String
     override def value = s"(type '$missingType' not yet supported)"
+  }
+
+  final case class FormData(processDefinitionId: ProcessDefinitionId, formProperties: Seq[FormProperty])
+
+  final case class FormProperty(id: FormPropertyId, name: String, value: Option[FormPropertyValue])
+
+  sealed trait FormPropertyValue {
+    type Value
+    def value: Value
+  }
+
+  final case class StringFormPropertyValue(value: String) extends FormPropertyValue {
+    type Value = String
   }
 
 }
