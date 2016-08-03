@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
   <process id="bimgur-master" isExecutable="true" name="Bimgur Master">
-    <startEvent id="sid-5A67DED4-A07D-46B3-B93B-ECB2F694FCA0"></startEvent>
+    <startEvent id="sid-5A67DED4-A07D-46B3-B93B-ECB2F694FCA0">
+      <extensionElements>
+        <activiti:formProperty id="analysis-name" name="Analysis Name" type="string" required="true"/>
+      </extensionElements>
+    </startEvent>
     <serviceTask id="sid-B51FA93A-B49F-4312-AF04-47DF0564008A" name="CreateImageAnalysisProcesses" activiti:class="ch.fhnw.ima.bimgur.activiti.delegates.CreateImageAnalysisProcesses"></serviceTask>
     <sequenceFlow id="sid-EF8E1611-A9DE-47FF-AF75-199E85EF48FD" sourceRef="sid-5A67DED4-A07D-46B3-B93B-ECB2F694FCA0" targetRef="sid-B51FA93A-B49F-4312-AF04-47DF0564008A"></sequenceFlow>
     <intermediateThrowEvent id="sid-A8C8ADBA-2920-46B7-B931-336E3DA4B566"></intermediateThrowEvent>

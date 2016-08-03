@@ -30,6 +30,9 @@ object BimgurController {
     override def next(newPotResult: Pot[FormData]) = RefreshMasterFormData(newPotResult)
   }
 
+  case class StartAnalysis(startProcessFormData: StartProcessFormData)
+  implicit object StartAnalysis extends ActionType[StartAnalysis]
+
   // Action Handlers
 
   class AnalysesHandler(modelRW: ModelRW[BimgurModel, Pot[Seq[Analysis]]]) extends ActionHandler(modelRW) {
@@ -44,16 +47,18 @@ object BimgurController {
 
   class MasterFormDataHandler(modelRW: ModelRW[BimgurModel, Pot[FormData]]) extends ActionHandler(modelRW) {
     override def handle = {
-      case action: RefreshMasterFormData =>
 
+      case action: RefreshMasterFormData =>
         val processDefinitionsResponse = repositoryService.getProcessDefinitions(MasterWorkflowKey)
         val formDataResponse = processDefinitionsResponse.flatMap {
           case Xor.Right(Seq(processDefinition)) => formService.getFormData(processDefinition.id)
           case _ => Future.successful(Xor.left(new Throwable(s"Retrieving unique master workflow with key '$MasterWorkflowKey' failed")))
         }
-
         val effect = serviceCallEffect(formDataResponse)(action)
         action.handleWith(this, effect)(PotAction.handler())
+
+      case StartAnalysis(data) =>
+        effectOnly(Effect(formService.submitStartFormData(data).map(_ => RefreshAnalyses())))
     }
   }
 

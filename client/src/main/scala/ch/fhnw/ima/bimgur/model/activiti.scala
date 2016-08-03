@@ -30,7 +30,7 @@ object activiti {
 
   final case class ProcessInstance(id: ProcessInstanceId, processDefinitionId: ProcessDefinitionId, variables: Seq[Variable])
 
-  final case class Variable(id: VariableId, name: String, `type`: String, value: VariableValue)
+  final case class Variable(name: String, `type`: String, value: VariableValue)
 
   object Variable {
 
@@ -72,11 +72,10 @@ object activiti {
       }
 
       for {
-        id <- c.downField("id").as[String]
         name <- c.downField("name").as[String]
         t <- `type`
         vv <- variableValue
-      } yield Variable(id, name, t, vv)
+      } yield Variable(name, t, vv)
 
     }
     )
@@ -121,5 +120,8 @@ object activiti {
   final case class StringFormPropertyValue(value: String) extends FormPropertyValue {
     type Value = String
   }
+
+  final case class StartProcessFormData(processDefinitionId: ProcessDefinitionId, properties: Seq[StartFormProperty])
+  final case class StartFormProperty(id: FormPropertyId, value: String)
 
 }

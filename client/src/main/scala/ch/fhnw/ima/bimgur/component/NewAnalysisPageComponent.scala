@@ -24,7 +24,7 @@ object NewAnalysisPageComponent {
         <.h3(Page.NewAnalysisPage.pageTitle),
         p.proxy().renderFailed(ex => <.div("Loading failed (Console log for details)")),
         p.proxy().renderPending(_ > 500, _ => <.div("Loading...")),
-        p.proxy().renderReady(FormDataComponent(_))
+        p.proxy().renderReady(_ => FormDataComponent(p.proxy))
       )
     }
 
