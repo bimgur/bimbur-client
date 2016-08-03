@@ -1,7 +1,7 @@
 package ch.fhnw.ima.bimgur.component
 
 import ch.fhnw.ima.bimgur.component.pages.Page
-import ch.fhnw.ima.bimgur.controller.BimgurController.UpdateMasterFormData
+import ch.fhnw.ima.bimgur.controller.BimgurController.RefreshMasterFormData
 import ch.fhnw.ima.bimgur.model.activiti._
 import diode.data.Pot
 import diode.react.ModelProxy
@@ -15,11 +15,9 @@ object NewAnalysisPageComponent {
 
   class Backend($: BackendScope[Props, Unit]) {
 
-    def lazyLoadMasterFormData(props: Props): Callback = {
-      Callback.when(props.proxy().isEmpty)(refreshMasterFormData(props))
-    }
+    def lazyLoadMasterFormData(proxy: ModelProxy[Pot[FormData]]) =
+      Callback.when(proxy().isEmpty)(proxy.dispatch(RefreshMasterFormData()))
 
-    def refreshMasterFormData(props: Props) = props.proxy.dispatch(UpdateMasterFormData())
 
     def render(p: Props) = {
       <.div(
@@ -34,7 +32,7 @@ object NewAnalysisPageComponent {
 
   private val component = ReactComponentB[Props](getClass.getSimpleName)
     .renderBackend[Backend]
-    .componentDidMount(scope => scope.backend.lazyLoadMasterFormData(scope.props))
+    .componentDidMount(scope => scope.backend.lazyLoadMasterFormData(scope.props.proxy))
     .build
 
   def apply(proxy: ModelProxy[Pot[FormData]]) = component(Props(proxy))

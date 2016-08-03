@@ -22,12 +22,12 @@ object BimgurController {
 
   // Actions
 
-  case class UpdateAnalyses(potResult: Pot[Seq[Analysis]] = Empty) extends PotAction[Seq[Analysis], UpdateAnalyses] {
-    override def next(newPotResult: Pot[Seq[Analysis]]) = UpdateAnalyses(newPotResult)
+  case class RefreshAnalyses(potResult: Pot[Seq[Analysis]] = Empty) extends PotAction[Seq[Analysis], RefreshAnalyses] {
+    override def next(newPotResult: Pot[Seq[Analysis]]) = RefreshAnalyses(newPotResult)
   }
 
-  case class UpdateMasterFormData(potResult: Pot[FormData] = Empty) extends PotAction[FormData, UpdateMasterFormData] {
-    override def next(newPotResult: Pot[FormData]) = UpdateMasterFormData(newPotResult)
+  case class RefreshMasterFormData(potResult: Pot[FormData] = Empty) extends PotAction[FormData, RefreshMasterFormData] {
+    override def next(newPotResult: Pot[FormData]) = RefreshMasterFormData(newPotResult)
   }
 
   // Action Handlers
@@ -35,7 +35,7 @@ object BimgurController {
   class AnalysesHandler(modelRW: ModelRW[BimgurModel, Pot[Seq[Analysis]]]) extends ActionHandler(modelRW) {
 
     override def handle = {
-      case action: UpdateAnalyses =>
+      case action: RefreshAnalyses =>
         val effect = serviceCallEffect(runtimeService.getProcessInstances)(action)
         action.handleWith(this, effect)(PotAction.handler())
     }
@@ -44,7 +44,7 @@ object BimgurController {
 
   class MasterFormDataHandler(modelRW: ModelRW[BimgurModel, Pot[FormData]]) extends ActionHandler(modelRW) {
     override def handle = {
-      case action: UpdateMasterFormData =>
+      case action: RefreshMasterFormData =>
 
         val processDefinitionsResponse = repositoryService.getProcessDefinitions(MasterWorkflowKey)
         val formDataResponse = processDefinitionsResponse.flatMap {

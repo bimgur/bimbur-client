@@ -3,7 +3,8 @@ package component
 
 import ch.fhnw.ima.bimgur.component.bootstrap.Button
 import ch.fhnw.ima.bimgur.component.pages.Page
-import ch.fhnw.ima.bimgur.controller.BimgurController.UpdateAnalyses
+import ch.fhnw.ima.bimgur.component.pages.Page.NewAnalysisPage
+import ch.fhnw.ima.bimgur.controller.BimgurController.RefreshAnalyses
 import ch.fhnw.ima.bimgur.model.activiti.{Analysis, Variable}
 import ch.fhnw.ima.bimgur.style.GlobalStyles
 import diode.data.Pot
@@ -20,21 +21,27 @@ object AnalysesPageComponent {
 
   class Backend($: BackendScope[Props, Unit]) {
 
-    def lazyLoadAnalyses(props: Props): Callback = {
+    def lazyLoadAnalyses(props: Props) =
       Callback.when(props.proxy().isEmpty)(refreshAnalyses(props))
-    }
 
-    def refreshAnalyses(props: Props) = props.proxy.dispatch(UpdateAnalyses())
+    def refreshAnalyses(props: Props) = props.proxy.dispatch(RefreshAnalyses())
 
     def render(p: Props) = {
 
       val css = GlobalStyles
 
       def renderAnalysis(analysis: Seq[Analysis]) =
-        <.table(css.table,
-          <.thead(renderHeaderRow),
-          <.tbody(analysis map renderAnalysisRow)
-        )
+        if (analysis.isEmpty) {
+          <.div(css.infoBox,
+            "No analyses yet. Maybe ",
+            <.a(^.href := s"#/${NewAnalysisPage.hashLink}", "start"),
+            " a new one?")
+        } else {
+          <.table(css.table,
+            <.thead(renderHeaderRow),
+            <.tbody(analysis map renderAnalysisRow)
+          )
+        }
 
       def renderHeaderRow = <.tr(<.th("Id"), <.th("Variables"))
 
