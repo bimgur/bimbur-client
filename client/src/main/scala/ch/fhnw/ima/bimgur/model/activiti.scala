@@ -114,14 +114,15 @@ object activiti {
 
   sealed trait FormPropertyValue {
     type Value
+    def id: FormPropertyId
     def value: Value
   }
 
-  final case class StringFormPropertyValue(value: String) extends FormPropertyValue {
+  final case class StringFormPropertyValue(id: FormPropertyId, value: String) extends FormPropertyValue {
     type Value = String
   }
 
-  final case class StartProcessFormData(processDefinitionId: ProcessDefinitionId, properties: Seq[StartFormProperty])
-  final case class StartFormProperty(id: FormPropertyId, value: String)
+  final case class StartProcessFormData(processDefinitionId: ProcessDefinitionId, properties: Seq[PersistableFormPropertyValue])
+  final case class PersistableFormPropertyValue(id: FormPropertyId, value: String)
 
 }
