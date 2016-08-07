@@ -22,6 +22,7 @@ object Settings {
     val activiti = "5.21.0"
     val servlet = "3.1.0"
     val slf4j = "1.7.21"
+    val ammoniteOps = "0.7.0"
 
     // client Scala.JS libraries
     val scalaJsReact = "0.11.1"
@@ -38,7 +39,8 @@ object Settings {
   val activitiCustomDependencies = Def.setting(Seq(
     "org.activiti" % "activiti-engine" % versions.activiti,
     "javax.servlet" % "javax.servlet-api" %  versions.servlet % Provided,
-    "org.slf4j" % "slf4j-simple" % versions.slf4j
+    "org.slf4j" % "slf4j-simple" % versions.slf4j,
+    "com.lihaoyi" %% "ammonite-ops" % versions.ammoniteOps
   ))
 
   val clientDependencies = Def.setting(Seq(

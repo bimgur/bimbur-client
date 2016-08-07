@@ -121,10 +121,15 @@ docker build --tag=bimgur .
 ##### Run container
 
 ```
-docker run -it -p 8080:8080 -v -v /local/path/to/bimgur/client:/usr/local/tomcat/webapps/bimgur bimgur
+docker run
+  -it
+  -p 8080:8080
+  -v /local/path/to/bimgur/client:/usr/local/tomcat/webapps/bimgur
+  -v /local/path/to/bimgur/server/data:/data
+  bimgur
 ```
 
-WARNING: The local path *must* be specified as an absolute path
+WARNING: Local paths must be specified as *absolute* paths
 
 ### Access Bimgur Web Applications
 

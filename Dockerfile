@@ -8,7 +8,12 @@
 # Running a tagged image
 # -----------------------------------------------------------------------------
 #
-# `docker run -it -p 8080:8080 -v -v /local/path/to/bimgur/client:/usr/local/tomcat/webapps/bimgur bimgur`
+# `docker run`
+# `  -it`
+# `  -p 8080:8080`
+# `  -v /local/path/to/bimgur/client:/usr/local/tomcat/webapps/bimgur`
+# `  -v /local/path/to/bimgur/server/data:/data`
+# `  bimgur`
 #
 # -----------------------------------------------------------------------------
 # Connecting via browser

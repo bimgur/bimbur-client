@@ -46,5 +46,5 @@ lazy val root = Project(id = "bimgur", base = file("."))
 
 // Custom command which prepares all artifacts necessary to build our docker image
 lazy val dockerize = Command.command("dockerize") {
-  state => "package" :: "activiti-custom/pack":: "client/fastOptJS" :: state
+  state => "package" :: "activiti-custom/pack" :: "client/fastOptJS" :: state
 }

@@ -110,17 +110,7 @@ object activiti {
 
   final case class FormData(processDefinitionId: ProcessDefinitionId, formProperties: Seq[FormProperty])
 
-  final case class FormProperty(id: FormPropertyId, name: String, value: Option[FormPropertyValue])
-
-  sealed trait FormPropertyValue {
-    type Value
-    def id: FormPropertyId
-    def value: Value
-  }
-
-  final case class StringFormPropertyValue(id: FormPropertyId, value: String) extends FormPropertyValue {
-    type Value = String
-  }
+  final case class FormProperty(id: FormPropertyId, name: String, value: Option[String])
 
   final case class StartProcessFormData(processDefinitionId: ProcessDefinitionId, properties: Seq[PersistableFormPropertyValue])
   final case class PersistableFormPropertyValue(id: FormPropertyId, value: String)

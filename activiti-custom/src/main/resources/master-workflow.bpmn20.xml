@@ -4,6 +4,8 @@
     <startEvent id="sid-5A67DED4-A07D-46B3-B93B-ECB2F694FCA0">
       <extensionElements>
         <activiti:formProperty id="analysis-name" name="Analysis Name" type="string" required="true"/>
+        <activiti:formProperty id="workflow-key" name="Analysis Workflow Key" type="string" required="true" default="bimgur-demo-japanese-numbers"/>
+        <activiti:formProperty id="image-path" name="Image Path" type="string" required="true" default="japan"/>
       </extensionElements>
     </startEvent>
     <serviceTask id="sid-B51FA93A-B49F-4312-AF04-47DF0564008A" name="CreateImageAnalysisProcesses" activiti:class="ch.fhnw.ima.bimgur.activiti.delegates.CreateImageAnalysisProcesses"></serviceTask>
