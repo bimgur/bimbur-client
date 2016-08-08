@@ -11,6 +11,7 @@ import io.circe.generic.auto._
 import io.circe.parser._
 import io.circe.syntax._
 import org.scalajs.dom.XMLHttpRequest
+import FormService._
 
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
@@ -21,12 +22,18 @@ case class FormService(activitiRestUrl: String) {
   def getFormData(processDefinitionId: ProcessDefinitionId): Future[Xor[Error, FormData]] = {
     val urlWithParams = s"$url?processDefinitionId=$processDefinitionId"
     val requestFuture = Ajax.get(urlWithParams)
-    requestFuture.map(response => decode[FormData](response.responseText))
+    requestFuture.map(response => decodeFormData(response.responseText))
   }
 
   def submitStartFormData(startProcessFormData: StartProcessFormData): Future[XMLHttpRequest] = {
     val requestBody = startProcessFormData.asJson.noSpaces
     Ajax.post(url, requestBody, headers = Map("Content-Type" -> "application/json; charset=utf-8"))
   }
+
+}
+
+object FormService {
+
+  def decodeFormData(json: String) = decode[FormData](json)
 
 }

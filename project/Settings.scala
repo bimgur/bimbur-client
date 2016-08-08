@@ -29,6 +29,7 @@ object Settings {
     val scalaCSS = "0.4.1"
     val diode = "1.0.0"
     val circe = "0.5.0-M2"
+    val scalaTest = "3.0.0"
 
     // client JS dependencies
     val react = "15.2.1"
@@ -50,7 +51,8 @@ object Settings {
     "me.chrons" %%% "diode-react" % versions.diode,
     "io.circe" %%% "circe-scalajs" % versions.circe,
     "io.circe" %%% "circe-parser" % versions.circe,
-    "io.circe" %%% "circe-generic" % versions.circe
+    "io.circe" %%% "circe-generic" % versions.circe,
+    "org.scalatest" %%% "scalatest" % versions.scalaTest % "test"
   ))
 
   val clientJsDependencies = Def.setting(Seq(
