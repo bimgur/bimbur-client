@@ -1,4 +1,4 @@
-# Bimgur
+# Bimgur image:https://travis-ci.org/bimgur/bimgur.svg?branch=master["Build Status", link="https://travis-ci.org/bimgur/bimgur"]
 
 An Activiti-based workflow application to process bacterial images.
 
