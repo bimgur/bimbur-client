@@ -28,7 +28,7 @@ object Settings {
     val scalaJsReact = "0.11.1"
     val scalaCSS = "0.4.1"
     val diode = "1.0.0"
-    val circe = "0.5.0-M2"
+    val circe = "0.5.3"
     val scalaTest = "3.0.0"
 
     // client JS dependencies

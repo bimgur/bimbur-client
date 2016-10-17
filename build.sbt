@@ -41,6 +41,7 @@ lazy val client = (project in file("client"))
 lazy val root = Project(id = "bimgur", base = file("."))
   .aggregate(activitiCustom, client)
   .settings(
+    scalaVersion := Settings.versions.scala, 
     commands += dockerize
   )
 
