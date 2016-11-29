@@ -1,0 +1,19 @@
+apply plugin: 'scala'
+
+apply from: "../gradle/dependencies.gradle"
+
+task gatherDependenciesInFolder(type: Copy) {
+    into "$buildDir/dependencies"
+    from configurations.runtime
+}
+
+
+dependencies {
+    compile libraries.scala
+    compile libraries.activiti
+    compile libraries.servlet
+    compile libraries.slf4j
+    compile libraries.ammonite
+}
+
+build.finalizedBy gatherDependenciesInFolder

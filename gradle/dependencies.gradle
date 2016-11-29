@@ -1,0 +1,9 @@
+ext {
+    libraries = [:]
+}
+
+libraries.scala = 'org.scala-lang:scala-library:2.12.0'
+libraries.activiti = 'org.activiti:activiti-engine:5.21.0'
+libraries.servlet = 'javax.servlet:javax.servlet-api:3.1.0'
+libraries.slf4j = 'org.slf4j:slf4j-simple:1.7.21'
+libraries.ammonite = 'com.lihaoyi:ammonite-ops_2.12:COMMIT-057440b'

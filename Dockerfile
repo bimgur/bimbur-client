@@ -11,15 +11,13 @@
 # `docker run`
 # `  -it`
 # `  -p 8080:8080`
-# `  -v /local/path/to/bimgur/client:/usr/local/tomcat/webapps/bimgur`
-# `  -v /local/path/to/bimgur/server/data:/data`
+# `  -v /local/path/to/bimgur/bimgur-server/data:/data`
 # `  bimgur`
 #
 # -----------------------------------------------------------------------------
 # Connecting via browser
 # -----------------------------------------------------------------------------
 #
-# http://localhost:8080/bimgur/index-dev.html
 # http://localhost:8080/activiti-explorer
 #
 # Mac OSX: `docker-machine ip` instead of localhost
@@ -55,35 +53,37 @@ RUN echo "listen_addresses='*'" >> /etc/postgresql/9.4/main/postgresql.conf
 # Tomcat
 # -----------------------------------------------------------------------------
 
-ADD server/tomcat/catalina.properties /usr/local/tomcat/conf/
-ADD server/tomcat/setenv.sh /usr/local/tomcat/bin/
+ADD bimgur-server/tomcat/catalina.properties /usr/local/tomcat/conf/
+ADD bimgur-server/tomcat/setenv.sh /usr/local/tomcat/bin/
 
 # -----------------------------------------------------------------------------
 # Activiti Explorer
 # -----------------------------------------------------------------------------
 
-ADD server/activiti/activiti-explorer-*.war /tmp/
-RUN unzip /tmp/activiti-explorer-*.war -d /usr/local/tomcat/webapps/activiti-explorer
-ADD server/activiti/db.properties /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/classes/
-ADD server/activiti/engine.properties /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/classes/
-ADD server/postgres/postgres*.jar /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/lib/
-ADD activiti-custom/target/pack/lib/*.jar /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/lib/
+ADD bimgur-server/activiti/activiti-explorer-*.war /tmp/
+RUN unzip -o /tmp/activiti-explorer-*.war -d /usr/local/tomcat/webapps/activiti-explorer
+ADD bimgur-server/activiti/db.properties /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/classes/
+ADD bimgur-server/activiti/engine.properties /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/classes/
+ADD bimgur-server/postgres/postgres*.jar /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/lib/
+ADD bimgur-activiti-custom/build/libs/bimgur-activiti-custom-*.jar /usr/local/tomcat/webapps/activiti-explorer/WEB-INF/lib/
+ADD bimgur-activiti-custom/build/dependencies/*.jar /usr/local/tomcat/webapps/activiti-rest/WEB-INF/lib/
 
 # -----------------------------------------------------------------------------
 # Activiti REST
 # -----------------------------------------------------------------------------
 
-ADD server/activiti/activiti-rest-*.war /tmp/
-RUN unzip /tmp/activiti-rest-*.war -d /usr/local/tomcat/webapps/activiti-rest
-ADD server/activiti/activiti-rest-web.xml /usr/local/tomcat/webapps/activiti-rest/WEB-INF/web.xml
-ADD server/activiti/db.properties /usr/local/tomcat/webapps/activiti-rest/WEB-INF/classes/
-ADD server/activiti/engine.properties /usr/local/tomcat/webapps/activiti-rest/WEB-INF/classes/
-ADD server/postgres/postgres*.jar /usr/local/tomcat/webapps/activiti-rest/WEB-INF/lib/
-ADD activiti-custom/target/pack/lib/*.jar /usr/local/tomcat/webapps/activiti-rest/WEB-INF/lib/
+ADD bimgur-server/activiti/activiti-rest-*.war /tmp/
+RUN unzip -o /tmp/activiti-rest-*.war -d /usr/local/tomcat/webapps/activiti-rest
+ADD bimgur-server/activiti/activiti-rest-web.xml /usr/local/tomcat/webapps/activiti-rest/WEB-INF/web.xml
+ADD bimgur-server/activiti/db.properties /usr/local/tomcat/webapps/activiti-rest/WEB-INF/classes/
+ADD bimgur-server/activiti/engine.properties /usr/local/tomcat/webapps/activiti-rest/WEB-INF/classes/
+ADD bimgur-server/postgres/postgres*.jar /usr/local/tomcat/webapps/activiti-rest/WEB-INF/lib/
+ADD bimgur-activiti-custom/build/libs/bimgur-activiti-custom-*.jar /usr/local/tomcat/webapps/activiti-rest/WEB-INF/lib/
+ADD bimgur-activiti-custom/build/dependencies/*.jar /usr/local/tomcat/webapps/activiti-rest/WEB-INF/lib/
 
 # -----------------------------------------------------------------------------
 # Three, two, one -- GO! :-)
 # -----------------------------------------------------------------------------
 
-ADD server/start-from-docker.sh /tmp/
+ADD bimgur-server/start-from-docker.sh /tmp/
 CMD ["/tmp/start-from-docker.sh"]

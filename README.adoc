@@ -1,5 +1,7 @@
 # Bimgur image:https://travis-ci.org/bimgur/bimgur.svg?branch=master["Build Status", link="https://travis-ci.org/bimgur/bimgur"]
 
+NOTE: THIS IS NO LONGER VALID AND WILL BE UPDATED SOON (migrating from Scala.js to JavaFX)
+
 An Activiti-based workflow application to process bacterial images.
 
 ## Architecture
