@@ -1,0 +1,10 @@
+apply from: '../gradle/dependencies.gradle'
+
+dependencies {
+    compile libraries.javaslang
+    compile libraries.javaslangJackson
+    compile libraries.retrofit
+    compile libraries.rxJava
+    compile libraries.retrofitRxJavaAdapter
+    compile libraries.okhttpLogging
+}

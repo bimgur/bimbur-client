@@ -1,6 +1,6 @@
 apply plugin: 'scala'
 
-apply from: "../gradle/dependencies.gradle"
+apply from: '../gradle/dependencies.gradle'
 
 task gatherDependenciesInFolder(type: Copy) {
     into "$buildDir/dependencies"
