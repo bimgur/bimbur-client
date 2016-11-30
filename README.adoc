@@ -1,31 +1,51 @@
 # Bimgur image:https://travis-ci.org/bimgur/bimgur.svg?branch=master["Build Status", link="https://travis-ci.org/bimgur/bimgur"]
 
-NOTE: THIS IS NO LONGER VALID AND WILL BE UPDATED SOON (migrating from Scala.js to JavaFX)
+Activiti-based workflow applications to process bacterial images.
 
-An Activiti-based workflow application to process bacterial images.
+## Clients
+
+Bimgur offers two client applications:
+
+### BimgurFX
+
+* A workflow application which tracks image analysis tasks
+* Allows students to claim an image analysis task, work on it, mark it complete etc.
+* Allows scientists to track image analysis progress
+
+Technically, this is a JavaFX fat client which can be installed on any operating system.
+
+### Actitivi Explorer
+
+* An administration tool to manage the workflow engine
+* Allows scientists to create new BimgurFX users
+* Allows scientist to define new BimgurFX image analysis workflows
+
+Technically, this is a web application which can be accessed through a browser.
+This application is provided out out-of-the-box by the http://activiti.org[Activiti project].
 
 ## Architecture
 
-Bimgur uses a three-tier architecture:
+TODO: Image
 
-* PostgreSQL Database
-* Apache Tomcat Server
-* Web Frontend
+## Project Structure
 
-Two web applications are available:
+`bimgur-server`
 
-* *Activiti Explorer*: Allows to _administrate_ workflows and users
-* *Bimgur*: Allows to _execute_ workflows (i.e. start processes, work on tasks, etc)
+* Activiti Explorer and Activiti REST (as WARs)
+* PostgreSQL configuration
+* Tomcat configuration
+* Example image data
 
-Activiti Explorer is an application provided out-of-the-box by the http://activiti.org[Activiti project].
-Bimgur is a Scala.js application whose code is contained in this repository.
-Both, Activiti Explorer and Bimgur, connect to the same PostgreSQL database.
-Bimgur uses the Activiti REST layer to do so.
+`bimgur-activiti-custom`
+
+* Custom workflow definitions
+* Bootstrap code (deploy custom workflows upon server start)
+* Custom service task implementations
 
 ## Development Setup
 
-Installing a server, a database, and multiple frontend components can be tedious.
-To simplify things, https://www.docker.com[Docker] allows to create a virtualized installation via script.
+Installing a server, a database, and deploying custom code can be tedious.
+To simplify things, https://www.docker.com[Docker] allows to create a virtual installation via script.
 The script is called `Dockerfile` and contains all necessary steps:
 
 * Installs PostgreSQL
@@ -34,12 +54,15 @@ The script is called `Dockerfile` and contains all necessary steps:
 * Deploys Activiti REST
 * Add custom Activiti code (to Explorer and REST app)
 
-In the end we will have a neat bundle called a _docker image_.
-We will then create an instance of this image (called a container) and mount all Bimgur Scala.js client artifacts into it.
-These static files will then be served via Tomcat.
+A `Dockerfile` allows to build a neat bundle of the complete server machinery, called a _docker image_.
+Running an image creates a _container_, an instance of an image.
 
-For all these steps to succeed, the necessary artifacts first need to be compiled.
-The Scala Build Tool (SBT) is used for this purpose: A custom `dockerize` command encapsulates all necessary tasks.
+Such a container represents "a running server"; only then the client applications can be used:
+
+* BimgurFX can e.g. be started on a student machine and will connect to the server (through a REST API)
+* Activiti Explorer can be started by pointing an browser to the server's IP (details below)
+
+For the steps in the `Dockerfile` to succeed, all custom code first need to be compiled:
 
 ### Compile Artifacts
 
@@ -52,18 +75,12 @@ brew install caskroom/cask/brew-cask
 brew install cask java
 ```
 
-* Scala Build Tool (SBT)
-
-`brew install sbt`
-
-NOTE: No need to install a Scala compiler (will be managed by sbt)
-
 #### Compile Bimgur Artifacts via SBT
 
 From the root directory (where this README is contained):
 
 ```
-sbt dockerize
+./gradlew build
 ```
 
 ### Deploy Docker Container
@@ -91,22 +108,6 @@ docker-machine env
 
 For other options: https://docs.docker.com/machine/get-started
 
-#### Activate NFS on Docker Machine
-
-During development, it is convenient to mount Scala.js artifacts into the docker container (details below).
-This allows to see any changes through a simple browser refresh, without any re-deployments.
-Unfortunately, docker mounts are problematic on any non-Linux OS because of the underlying "vboxfs" filesystem.
-Often, files are not synchronized properly, and are truncated when accessed via Tomcat.
-
-As an alternative, docker-machine can be configured to use NFS:
-
-```
-brew install docker-machine-nfs
-docker-machine-nfs default
-```
-
-See https://github.com/adlogix/docker-machine-nfs for details.
-
 #### Run Bimgur Docker Container
 
 Creating a docker container is a two step process:
@@ -126,20 +127,18 @@ docker build --tag=bimgur .
 docker run
   -it
   -p 8080:8080
-  -v /local/path/to/bimgur/client:/usr/local/tomcat/webapps/bimgur
   -v /local/path/to/bimgur/server/data:/data
   bimgur
 ```
 
 WARNING: Local paths must be specified as *absolute* paths
 
-### Access Bimgur Web Applications
+# Running Activiti Explorer
 
-Both applications can be accessed through any browser:
+From any browser:
 
 ```
 http://localhost:8080/activiti-explorer
-http://localhost:8080/bimgur/index-dev.html
 ```
 
 WARNING: On OSX, `localhost` will not work. Run `docker-machine ip` to find out your docker host IP.
@@ -150,12 +149,6 @@ The following demo users exist for testing:
 * gonzo/gonzo (Manager)
 * fozzie/fozzie (User)
 
-### Continuous Compilation
+# Running BimgurFX
 
-While working on the Scala.js client, continuous compilation makes all changes available immediately:
-
-```
-sbt ~fastOptJS
-```
-
-NOTE: Because all client files are mapped via a docker volume, there's no need to re-start the container.
+TODO
