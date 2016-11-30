@@ -20,3 +20,11 @@ libraries.retrofit = [
         "com.squareup.retrofit2:retrofit:$retrofitVersion",
         "com.squareup.retrofit2:converter-jackson:$retrofitVersion"
         ]
+
+def junitPlatformVersion = '1.0.0-M3'
+def junitJupiterVersion  = '5.0.0-M3'
+libraries.junit5 = [
+        "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",
+        "org.junit.platform:junit-platform-runner:${junitPlatformVersion}",
+        "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
+]
