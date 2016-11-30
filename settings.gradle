@@ -1,1 +1,1 @@
-include 'bimgur-activiti-custom', 'bimgur-activiti-rest-client'
+include 'bimgur-activiti-custom', 'bimgur-activiti-rest-client', 'bimgur-activiti-fx-client'
