@@ -25,7 +25,7 @@ dependencies {
 junitPlatform {
     filters {
         tags {
-            exclude 'integration-test'
+            exclude project.hasProperty('runIntegrationTests') ? '' : 'integration-test'
         }
     }
 }
