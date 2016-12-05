@@ -42,6 +42,12 @@ TODO: Image
 * Bootstrap code (deploy custom workflows upon server start)
 * Custom service task implementations
 
+`bimgur-activiti-rest-client`
+
+* Java client connecting to Activiti REST API (based on Retrofit)
+* Immutable POJOs for all Activiti data models (based on JavaSlang/Jackson)
+* Data exposed as observable streams (based on RxJava)
+
 ## Development Setup
 
 Installing a server, a database, and deploying custom code can be tedious.

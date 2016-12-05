@@ -1,0 +1,15 @@
+# Java Activiti REST Client
+
+This module provides a Java HTTP client connecting to the Activiti REST API.
+
+`ActivitiRestClient` represents the entry point, exposing access to individual services (e.g. `IdentityService`).
+Service names and responsibilities are in line with Activiti APIs.
+
+# Testing
+
+All services are tested via integration tests.
+These tests require a running Activiti REST service and are therefore excluded from the default `gradle test` task.
+
+Instead, they can be run by explicitly calling:
+
+`../gradlew test -PrunIntegrationTests`
