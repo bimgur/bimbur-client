@@ -2,6 +2,10 @@
 
 Activiti-based workflow applications to process bacterial images.
 
+## Overview
+
+image:architecture-diagram.png[]
+
 ## Bimgur Clients
 
 Bimgur offers three client applications:
@@ -31,15 +35,24 @@ It is contained in the `bimgur-segment-fx-client` module of this repository.
 
 An administration tool to manage the workflow engine.
 
-* Allows scientists to define new "Bimgur Work" image analysis workflows
-* Allows scientists to administrate "Bimgur Work" users
+* Allows scientists to define new image analysis workflows
+* Allows scientists to administrate users
 
 Technically, this is a web application which can be accessed through a browser.
 It is provided out out-of-the-box by the http://activiti.org[Activiti project] and contained in the `bimgur-server` module (`activiti/activiti-explorer-*.war`).
 
-## Architecture
+## Bimgur Server
 
-TODO: Image
+At its core, Activiti uses a _process engine_ to manage all workflow aspects.
+All state is stored in a database.
+The server layer is responsible for hosting this process engine and managing data persistence.
+It uses two out-of-the-box Activiti components to expose the process engine to the outside world:
+
+* Activiti Explorer: Allows _users_ to interact with the process engine through a web application.
+* Activiti REST: Allows _applications_ to interact with the process engine through a REST API.
+
+Some workflows include automated tasks which run on the server.
+The code behind these tasks (e.g. MATLAB scripts) must also be deployed to the server ("Activiti Custom").
 
 ## Technical Project Modules
 
