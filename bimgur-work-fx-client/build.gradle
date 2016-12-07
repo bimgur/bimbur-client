@@ -8,8 +8,11 @@ buildscript {
 }
 
 apply plugin: 'javafx-gradle-plugin'
+apply plugin: 'application'
+
+mainClassName = 'ch.fhnw.ima.bimgur.client.BimgurWorkApplication'
 
 jfx {
-    mainClass = 'ch.fhnw.ima.bimgur.client.BimgurFX'
+    mainClass = mainClassName
     vendor = 'Bimgur'
 }

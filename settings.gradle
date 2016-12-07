@@ -1,1 +1,4 @@
-include 'bimgur-activiti-custom', 'bimgur-activiti-rest-client', 'bimgur-activiti-fx-client'
+include 'bimgur-activiti-custom',
+        'bimgur-activiti-rest-client',
+        'bimgur-work-fx-client',
+        'bimgur-segment-fx-client'

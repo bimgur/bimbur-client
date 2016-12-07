@@ -2,32 +2,45 @@
 
 Activiti-based workflow applications to process bacterial images.
 
-## Clients
+## Bimgur Clients
 
-Bimgur offers two client applications:
+Bimgur offers three client applications:
 
-### BimgurFX
+### Bimgur Work
 
-* A workflow application which tracks image analysis tasks
+A workflow application which tracks image analysis tasks.
+
 * Allows students to claim an image analysis task, work on it, mark it complete etc.
+* Allows scientists to schedule new analysis tasks (based on defined workflows)
 * Allows scientists to track image analysis progress
 
 Technically, this is a JavaFX fat client which can be installed on any operating system.
+It is contained in the `bimgur-work-fx-client` module of this repository.
+
+### Bimgur Segment
+
+An image segment editor.
+
+* Allows users to manually define/adjust segments through a set of specific editing tools
+* Can be integrated into "Bimgur Work" if segmentation is one task of a bigger workflow
+
+Technically, this is a JavaFX fat client which can be installed on any operating system.
+It is contained in the `bimgur-segment-fx-client` module of this repository.
 
 ### Actitivi Explorer
 
 * An administration tool to manage the workflow engine
-* Allows scientists to create new BimgurFX users
-* Allows scientist to define new BimgurFX image analysis workflows
+* Allows scientists to define new "Bimgur Work" image analysis workflows
+* Allows scientists to create new "Bimgur Work" users
 
 Technically, this is a web application which can be accessed through a browser.
-This application is provided out out-of-the-box by the http://activiti.org[Activiti project].
+It is provided out out-of-the-box by the http://activiti.org[Activiti project] and contained in the `bimgur-server` module (`activiti/activiti-explorer-*.war`).
 
 ## Architecture
 
 TODO: Image
 
-## Project Structure
+## Technical Project Modules
 
 `bimgur-server`
 
@@ -48,9 +61,18 @@ TODO: Image
 * Immutable POJOs for all Activiti data models (based on JavaSlang/Jackson)
 * Data exposed as observable streams (based on RxJava)
 
-## Development Setup
+`bimgur-work-fx-client`
 
-Installing a server, a database, and deploying custom code can be tedious.
+* Java FX application
+* Using `bimgur-activiti-rest-client` to access server
+
+`bimgur-segment-fx-client`
+
+* Java FX application
+
+## Server Setup
+
+Installing a servlet container, a database, and deploying custom code can be tedious.
 To simplify things, https://www.docker.com[Docker] allows to create a virtual installation via script.
 The script is called `Dockerfile` and contains all necessary steps:
 
@@ -139,7 +161,19 @@ docker run
 
 WARNING: Local paths must be specified as *absolute* paths
 
-# Running Activiti Explorer
+## Run Bimgur Clients
+
+### Run Bimgur Work
+
+Launch `BimgurWorkApplication` from your IDE or via Gradle:
+
+`./gradlew :bimgur-work-fx-client:run`
+
+### Run Bimgur Segment
+
+TODO
+
+### Run Activiti Explorer
 
 From any browser:
 
@@ -154,7 +188,3 @@ The following demo users exist for testing:
 * kermit/kermit (Admin)
 * gonzo/gonzo (Manager)
 * fozzie/fozzie (User)
-
-# Running BimgurFX
-
-TODO

@@ -10,9 +10,9 @@ import javafx.stage.Stage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class BimgurFX extends Application {
+public final class BimgurWorkApplication extends Application {
 
-    private static final Logger LOG = Logger.getLogger(BimgurFX.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(BimgurWorkApplication.class.getSimpleName());
 
     @Override
     public void start(Stage stage) throws Exception {
