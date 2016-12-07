@@ -29,9 +29,10 @@ It is contained in the `bimgur-segment-fx-client` module of this repository.
 
 ### Actitivi Explorer
 
-* An administration tool to manage the workflow engine
+An administration tool to manage the workflow engine.
+
 * Allows scientists to define new "Bimgur Work" image analysis workflows
-* Allows scientists to create new "Bimgur Work" users
+* Allows scientists to administrate "Bimgur Work" users
 
 Technically, this is a web application which can be accessed through a browser.
 It is provided out out-of-the-box by the http://activiti.org[Activiti project] and contained in the `bimgur-server` module (`activiti/activiti-explorer-*.war`).
