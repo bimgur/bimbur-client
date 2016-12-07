@@ -11,10 +11,11 @@ import java.util.logging.Logger;
 public final class BimgurWorkApplication extends Application {
 
     private static final Logger LOG = Logger.getLogger(BimgurWorkApplication.class.getSimpleName());
+    private static final String SERVER_URL = "http://192.168.99.100:8080";
 
     @Override
     public void start(Stage stage) throws Exception {
-        BimgurWorkModel model = new BimgurWorkModel();
+        BimgurWorkModel model = new BimgurWorkModel(SERVER_URL);
         BimgurWorkController controller = new BimgurWorkController(model);
         BimgurWorkView view = new BimgurWorkView(model, controller);
         Scene scene = new Scene(view, 800, 600);

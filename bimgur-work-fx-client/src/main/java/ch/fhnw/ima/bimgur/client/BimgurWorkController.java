@@ -16,21 +16,26 @@ import java.util.logging.Logger;
 public final class BimgurWorkController implements LoginController {
 
     private static final Logger LOG = Logger.getLogger(BimgurWorkController.class.getSimpleName());
-    private static final String BASE_URL = "http://192.168.99.100:8080/activiti-rest/service/";
 
     private final BimgurWorkModel model;
+    private final String baseUrl;
 
     BimgurWorkController(BimgurWorkModel model) {
         this.model = model;
+        this.baseUrl = model.getServerUrl() + "/activiti-rest/service/";
     }
 
     @Override
     public void login(String userId) {
-        IdentityService identityService = ActivitiRestClient.connect(BASE_URL, userId, userId).getIdentityService();
+        IdentityService identityService = ActivitiRestClient.connect(baseUrl, userId, userId).getIdentityService();
         Call<User> getUserCall = identityService.getUser(userId);
         getUserCall.enqueue((OnSuccessFxCallback<User>) validUser ->
                 model.currentUserProperty().setValue(Option.of(validUser))
         );
+    }
+
+    void refresh() {
+        // TODO: Implement
     }
 
     /** Convenience implementation which returns successful results on the FX application thread. */

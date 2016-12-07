@@ -10,6 +10,7 @@ libraries.ammonite = 'com.lihaoyi:ammonite-ops_2.12:COMMIT-057440b'
 libraries.rxJava = 'io.reactivex.rxjava2:rxjava:2.0.1'
 libraries.retrofitRxJavaAdapter = 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
 libraries.okhttpLogging = 'com.squareup.okhttp3:logging-interceptor:3.4.2'
+libraries.controlsFx = 'org.controlsfx:controlsfx:8.40.12'
 
 def javaslangVersion = '2.0.5'
 libraries.javaslang = "io.javaslang:javaslang:$javaslangVersion"
@@ -28,3 +29,4 @@ libraries.junit5 = [
         "org.junit.platform:junit-platform-runner:${junitPlatformVersion}",
         "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 ]
+

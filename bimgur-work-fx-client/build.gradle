@@ -10,10 +10,13 @@ buildscript {
 apply plugin: 'javafx-gradle-plugin'
 apply plugin: 'application'
 
+apply from: '../gradle/dependencies.gradle'
+
 mainClassName = 'ch.fhnw.ima.bimgur.client.BimgurWorkApplication'
 
 dependencies {
     compile project(':bimgur-activiti-rest-client')
+    compile libraries.controlsFx
 }
 
 jfx {
