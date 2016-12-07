@@ -3,8 +3,6 @@ package ch.fhnw.ima.bimgur.client;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.util.logging.Level;
@@ -16,8 +14,10 @@ public final class BimgurWorkApplication extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        StackPane rootPane = new StackPane(new Label("Hello Bimgur"));
-        Scene scene = new Scene(rootPane, 800, 600);
+        BimgurWorkModel model = new BimgurWorkModel();
+        BimgurWorkController controller = new BimgurWorkController(model);
+        BimgurWorkView view = new BimgurWorkView(model, controller);
+        Scene scene = new Scene(view, 800, 600);
 
         stage.setOnCloseRequest(e -> {
             LOG.fine("Main window closed, exiting application");

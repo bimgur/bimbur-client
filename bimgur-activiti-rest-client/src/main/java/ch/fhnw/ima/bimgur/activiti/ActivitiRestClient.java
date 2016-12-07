@@ -42,6 +42,13 @@ public final class ActivitiRestClient {
         return new OkHttpClient.Builder()
                 .authenticator((route, response) -> {
                     String credential = Credentials.basic(username, password);
+
+                    // If we already failed with these credentials, don't retry
+                    // https://github.com/square/retrofit/issues/1561
+                    if (credential.equals(response.request().header("Authorization"))) {
+                        return null;
+                    }
+
                     return response.request().newBuilder()
                             .header("Authorization", credential)
                             .build();
