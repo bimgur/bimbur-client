@@ -4,7 +4,7 @@ import ch.fhnw.ima.bimgur.activiti.model.User;
 import ch.fhnw.ima.bimgur.client.login.LoginView;
 import ch.fhnw.ima.bimgur.client.status.StatusBar;
 import ch.fhnw.ima.bimgur.client.status.StatusBarController;
-import ch.fhnw.ima.bimgur.client.util.ToggleableControlsPane;
+import ch.fhnw.ima.bimgur.util.fx.ToggleableControlsPane;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;

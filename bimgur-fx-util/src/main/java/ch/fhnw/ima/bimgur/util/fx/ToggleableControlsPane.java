@@ -1,4 +1,4 @@
-package ch.fhnw.ima.bimgur.client.util;
+package ch.fhnw.ima.bimgur.util.fx;
 
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.collections.FXCollections;

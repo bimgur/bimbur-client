@@ -75,6 +75,10 @@ The code behind these tasks (e.g. MATLAB scripts) must also be deployed to the s
 * Immutable POJOs for all Activiti data models (based on JavaSlang/Jackson)
 * Data exposed as observable streams (based on RxJava)
 
+`bimgur-fx-util`
+
+* Generic utilities for all bimgur Java FX applications
+
 `bimgur-work-fx-client`
 
 * Java FX application

@@ -1,4 +1,4 @@
-package ch.fhnw.ima.bimgur.client.util;
+package ch.fhnw.ima.bimgur.util.fx;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
