@@ -98,15 +98,15 @@ The script is called `Dockerfile` and contains all necessary steps:
 * Installs Tomcat
 * Deploys Activiti Explorer
 * Deploys Activiti REST
-* Add custom Activiti code (to Explorer and REST app)
+* Adds custom Activiti code (to Explorer and REST app)
 
 A `Dockerfile` allows to build a neat bundle of the complete server machinery, called a _docker image_.
 Running an image creates a _container_, an instance of an image.
 
 Such a container represents "a running server"; only then the client applications can be used:
 
-* BimgurFX can e.g. be started on a student machine and will connect to the server (through a REST API)
-* Activiti Explorer can be started by pointing an browser to the server's IP (details below)
+* "Bimgur Work" can e.g. be started on a student machine and will connect to the server (through a REST API)
+* "Activiti Explorer" can be accessed by pointing a browser to the server's IP (details below)
 
 For the steps in the `Dockerfile` to succeed, all custom code first need to be compiled:
 
