@@ -10,11 +10,15 @@ import ch.fhnw.ima.bimgur.util.fx.notification.NotificationPopupDispatcher;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import javaslang.control.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public final class BimgurWorkController implements LoginController, NotificationController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BimgurWorkController.class);
 
     private final BimgurWorkModel model;
     private final String baseUrl;
@@ -48,26 +52,31 @@ public final class BimgurWorkController implements LoginController, Notification
 
     @Override
     public void notifyError(String message) {
+        LOG.error(message);
         appendToModel(Notification.error(message));
     }
 
     @Override
     public void notifyError(String message, Throwable t) {
+        LOG.error(message, t);
         appendToModel(Notification.error(message));
     }
 
     @Override
     public void notifyWarn(String message) {
+        LOG.warn(message);
         appendToModel(Notification.warn(message));
     }
 
     @Override
     public void notifyInfo(String message) {
+        LOG.info(message);
         appendToModel(Notification.info(message));
     }
 
     @Override
     public void notifySilent(String message) {
+        LOG.debug(message);
         appendToModel(Notification.silent(message));
     }
 
@@ -98,12 +107,18 @@ public final class BimgurWorkController implements LoginController, Notification
                 );
             } else {
                 notifyError(actionDesc + " failed");
+                logErrorUrl(call);
             }
         }
 
         @Override
         public final void onFailure(Call<T> call, Throwable t) {
             notifyError(actionDesc + " failed", t);
+            logErrorUrl(call);
+        }
+
+        private void logErrorUrl(Call<T> call) {
+            LOG.error(actionDesc + " URL: " + call.request().url());
         }
 
     }

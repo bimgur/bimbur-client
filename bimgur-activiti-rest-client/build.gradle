@@ -17,7 +17,6 @@ dependencies {
     compile libraries.retrofit
     compile libraries.rxJava
     compile libraries.retrofitRxJavaAdapter
-    compile libraries.okhttpLogging
 
     testCompile libraries.junit5
 }
