@@ -11,12 +11,12 @@ import javaslang.control.Option;
 
 final class BimgurWorkModel implements StatusBarPresentationModel {
 
+    private final BimgurWorkConfig config;
     private final ObjectProperty<Option<User>> currentUserProperty = new SimpleObjectProperty<>(Option.none());
-    private final String serverUrl;
     private final ObservableList<Notification> notifications;
 
-    BimgurWorkModel(String serverUrl) {
-        this.serverUrl = serverUrl;
+    BimgurWorkModel(BimgurWorkConfig config) {
+        this.config = config;
         this.notifications = FXCollections.observableArrayList();
     }
 
@@ -25,7 +25,7 @@ final class BimgurWorkModel implements StatusBarPresentationModel {
     }
 
     public String getServerUrl() {
-        return serverUrl;
+        return config.getServerUrl();
     }
 
     public ObservableList<Notification> getNotifications() {
