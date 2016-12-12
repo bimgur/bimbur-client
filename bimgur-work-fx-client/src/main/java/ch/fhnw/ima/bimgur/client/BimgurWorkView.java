@@ -6,6 +6,7 @@ import ch.fhnw.ima.bimgur.client.status.StatusBar;
 import ch.fhnw.ima.bimgur.client.status.StatusBarController;
 import ch.fhnw.ima.bimgur.util.fx.ToggleableControlsPane;
 import ch.fhnw.ima.bimgur.util.fx.notification.NotificationListView;
+import ch.fhnw.ima.bimgur.util.fx.BusyOverlay;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -17,11 +18,13 @@ class BimgurWorkView extends StackPane {
 
     private final BimgurWorkModel model;
     private final BimgurWorkController controller;
+    private final BusyOverlay progressOverlay;
     private final StackPane centerPane;
 
     BimgurWorkView(BimgurWorkModel model, BimgurWorkController controller) {
         this.model = model;
         this.controller = controller;
+        this.progressOverlay = new BusyOverlay(model.isBusy());
 
         centerPane = new StackPane();
 
@@ -39,7 +42,7 @@ class BimgurWorkView extends StackPane {
     }
 
     private void setCenter(Node node) {
-        centerPane.getChildren().setAll(node);
+        centerPane.getChildren().setAll(node, progressOverlay);
     }
 
     private Node createViewContainer(StackPane centerPane) {

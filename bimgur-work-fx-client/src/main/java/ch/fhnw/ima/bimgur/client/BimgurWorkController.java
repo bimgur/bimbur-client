@@ -16,6 +16,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.util.function.Consumer;
+
 public final class BimgurWorkController implements LoginController, NotificationController {
 
     private static final Logger LOG = LoggerFactory.getLogger(BimgurWorkController.class);
@@ -34,12 +36,9 @@ public final class BimgurWorkController implements LoginController, Notification
     public void login(String userId) {
         IdentityService identityService = ActivitiRestClient.connect(baseUrl, userId, userId).getIdentityService();
         Call<User> getUserCall = identityService.getUser(userId);
-        getUserCall.enqueue(new OnSuccessFxCallback<User>("Login") {
-            @Override
-            void onSuccess(User validUser) {
-                model.currentUserProperty().setValue(Option.of(validUser));
-            }
-        });
+        dispatch("Login", getUserCall, validUser ->
+                model.currentUserProperty().setValue(Option.of(validUser))
+        );
     }
 
     void refresh() {
@@ -82,6 +81,51 @@ public final class BimgurWorkController implements LoginController, Notification
 
     private void appendToModel(Notification notification) {
         Platform.runLater(() -> model.getNotifications().add(notification));
+    }
+
+    /**
+     * Dispatches the given call asynchronously:
+     * - keeping track of progress
+     * - logging success/failure with the given action description
+     * - calling onSuccess on the FX application thread
+     */
+    private <T> void dispatch(String actionDesc, Call<T> call, Consumer<T> onSuccess) {
+
+        Callback<T> delegate = new OnSuccessFxCallback<T>(actionDesc) {
+            @Override
+            void onSuccess(T result) {
+                onSuccess.accept(result);
+            }
+        };
+
+        startProgress();
+        call.enqueue(new Callback<T>() {
+            @Override
+            public void onResponse(Call<T> call, Response<T> response) {
+                stopProgress();
+                delegate.onResponse(call, response);
+            }
+
+            @Override
+            public void onFailure(Call<T> call, Throwable t) {
+                stopProgress();
+                delegate.onFailure(call, t);
+            }
+        });
+    }
+
+    private void startProgress() {
+        updateProgress(1);
+    }
+
+    private void stopProgress() {
+        updateProgress(-1);
+    }
+
+    private void updateProgress(int delta) {
+        Platform.runLater(() ->
+                model.concurrentTaskCountProperty().set(model.concurrentTaskCountProperty().get() + delta)
+        );
     }
 
     /**
