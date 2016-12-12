@@ -5,6 +5,7 @@ import ch.fhnw.ima.bimgur.client.login.LoginView;
 import ch.fhnw.ima.bimgur.client.status.StatusBar;
 import ch.fhnw.ima.bimgur.client.status.StatusBarController;
 import ch.fhnw.ima.bimgur.util.fx.ToggleableControlsPane;
+import ch.fhnw.ima.bimgur.util.fx.notification.NotificationListView;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -42,7 +43,7 @@ class BimgurWorkView extends StackPane {
     }
 
     private Node createViewContainer(StackPane centerPane) {
-        StackPane notificationList = new StackPane(new Label("Notification Log Coming Soon"));
+        NotificationListView notificationList = new NotificationListView(model.getNotifications());
         ToggleableControlsPane mainPane = new ToggleableControlsPane(centerPane, ToggleableControlsPane.ControlPanePosition.BOTTOM, notificationList);
 
         StatusBar statusBar = new StatusBar(model, new StatusBarController() {

@@ -16,7 +16,7 @@ public final class BimgurWorkApplication extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         BimgurWorkModel model = new BimgurWorkModel(SERVER_URL);
-        BimgurWorkController controller = new BimgurWorkController(model);
+        BimgurWorkController controller = new BimgurWorkController(stage, model);
         BimgurWorkView view = new BimgurWorkView(model, controller);
         Scene scene = new Scene(view, 800, 600);
 

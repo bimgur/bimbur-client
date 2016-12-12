@@ -4,58 +4,106 @@ import ch.fhnw.ima.bimgur.activiti.ActivitiRestClient;
 import ch.fhnw.ima.bimgur.activiti.model.User;
 import ch.fhnw.ima.bimgur.activiti.service.IdentityService;
 import ch.fhnw.ima.bimgur.client.login.LoginController;
+import ch.fhnw.ima.bimgur.util.fx.notification.Notification;
+import ch.fhnw.ima.bimgur.util.fx.notification.NotificationController;
+import ch.fhnw.ima.bimgur.util.fx.notification.NotificationPopupDispatcher;
 import javafx.application.Platform;
+import javafx.stage.Stage;
 import javaslang.control.Option;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-public final class BimgurWorkController implements LoginController {
-
-    private static final Logger LOG = Logger.getLogger(BimgurWorkController.class.getSimpleName());
+public final class BimgurWorkController implements LoginController, NotificationController {
 
     private final BimgurWorkModel model;
     private final String baseUrl;
 
-    BimgurWorkController(BimgurWorkModel model) {
+    BimgurWorkController(Stage popupOwner, BimgurWorkModel model) {
         this.model = model;
         this.baseUrl = model.getServerUrl() + "/activiti-rest/service/";
+
+        model.getNotifications().addListener(new NotificationPopupDispatcher(popupOwner));
     }
 
     @Override
     public void login(String userId) {
         IdentityService identityService = ActivitiRestClient.connect(baseUrl, userId, userId).getIdentityService();
         Call<User> getUserCall = identityService.getUser(userId);
-        getUserCall.enqueue((OnSuccessFxCallback<User>) validUser ->
-                model.currentUserProperty().setValue(Option.of(validUser))
-        );
+        getUserCall.enqueue(new OnSuccessFxCallback<User>("Login") {
+            @Override
+            void onSuccess(User validUser) {
+                model.currentUserProperty().setValue(Option.of(validUser));
+            }
+        });
     }
 
     void refresh() {
         // TODO: Implement
     }
 
-    /** Convenience implementation which returns successful results on the FX application thread. */
-    private interface OnSuccessFxCallback<T> extends Callback<T> {
+    //------------------------------------------------
+    // NotificationController
+    //------------------------------------------------
 
-        void onSuccess(T result);
+    @Override
+    public void notifyError(String message) {
+        appendToModel(Notification.error(message));
+    }
+
+    @Override
+    public void notifyError(String message, Throwable t) {
+        appendToModel(Notification.error(message));
+    }
+
+    @Override
+    public void notifyWarn(String message) {
+        appendToModel(Notification.warn(message));
+    }
+
+    @Override
+    public void notifyInfo(String message) {
+        appendToModel(Notification.info(message));
+    }
+
+    @Override
+    public void notifySilent(String message) {
+        appendToModel(Notification.silent(message));
+    }
+
+    private void appendToModel(Notification notification) {
+        Platform.runLater(() -> model.getNotifications().add(notification));
+    }
+
+    /**
+     * Convenience implementation which returns successful results on the FX application thread.
+     */
+    private abstract class OnSuccessFxCallback<T> implements Callback<T> {
+
+        private final String actionDesc;
+
+        private OnSuccessFxCallback(String actionDesc) {
+            this.actionDesc = actionDesc;
+        }
+
+        abstract void onSuccess(T result);
 
         @Override
-        default void onResponse(Call<T> call, Response<T> response) {
+        public final void onResponse(Call<T> call, Response<T> response) {
             if (response.isSuccessful()) {
-                LOG.log(Level.INFO, call.request().url() + " successful");
-                Platform.runLater(() -> onSuccess(response.body()));
+                Platform.runLater(() -> {
+                            notifySilent(actionDesc + " successful");
+                            onSuccess(response.body());
+                        }
+                );
             } else {
-                LOG.log(Level.INFO, call.request().url() + " unsuccessful");
+                notifyError(actionDesc + " failed");
             }
         }
 
         @Override
-        default void onFailure(Call<T> call, Throwable t) {
-            LOG.log(Level.SEVERE, call.request().url() + " failed", t);
+        public final void onFailure(Call<T> call, Throwable t) {
+            notifyError(actionDesc + " failed", t);
         }
 
     }
