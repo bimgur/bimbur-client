@@ -78,6 +78,12 @@ ADD bimgur-activiti-custom/build/libs/bimgur-activiti-custom-*.jar /usr/local/to
 ADD bimgur-activiti-custom/build/dependencies/*.jar /usr/local/tomcat/webapps/activiti-rest/WEB-INF/lib/
 
 # -----------------------------------------------------------------------------
+# Windows compatibility
+# -----------------------------------------------------------------------------
+RUN apt-get install -y -q dos2unix
+RUN dos2unix /tmp/start-from-docker.sh
+
+# -----------------------------------------------------------------------------
 # Three, two, one -- GO! :-)
 # -----------------------------------------------------------------------------
 
