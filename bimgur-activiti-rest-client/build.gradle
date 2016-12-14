@@ -19,6 +19,10 @@ dependencies {
     compile libraries.retrofitRxJavaAdapter
 
     testCompile libraries.junit5
+    testCompile libraries.activiti
+    testCompile libraries.postgres
+    testCompile libraries.slf4j
+    testCompile libraries.log4j
 }
 
 junitPlatform {
