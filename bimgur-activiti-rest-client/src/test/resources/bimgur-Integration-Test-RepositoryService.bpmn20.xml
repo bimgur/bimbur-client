@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/processdef">
+  <process id="bimgur-Integration-Test-RepositoryService" name="IntegrationTest" isExecutable="true">
+    <startEvent id="sid-5A67DED4-A07D-46B3-B93B-ECB2F694FCA0">
+      <extensionElements>
+        <activiti:formProperty id="analysis-name" name="Analysis Name" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="workflow-key" name="Analysis Workflow Key" type="string" required="true"></activiti:formProperty>
+        <activiti:formProperty id="image-path" name="Image Path" type="string" required="true"></activiti:formProperty>
+      </extensionElements>
+    </startEvent>
+    <serviceTask id="sid-B51FA93A-B49F-4312-AF04-47DF0564008A" name="CreateImageAnalysisProcesses" activiti:class="ch.fhnw.ima.bimgur.activiti.delegates.CreateImageAnalysisProcesses"></serviceTask>
+    <sequenceFlow id="sid-EF8E1611-A9DE-47FF-AF75-199E85EF48FD" sourceRef="sid-5A67DED4-A07D-46B3-B93B-ECB2F694FCA0" targetRef="sid-B51FA93A-B49F-4312-AF04-47DF0564008A"></sequenceFlow>
+    <intermediateThrowEvent id="sid-A8C8ADBA-2920-46B7-B931-336E3DA4B566"></intermediateThrowEvent>
+    <sequenceFlow id="sid-4D76923A-2406-406A-A19A-F1A5AA49E0C8" sourceRef="sid-B51FA93A-B49F-4312-AF04-47DF0564008A" targetRef="sid-A8C8ADBA-2920-46B7-B931-336E3DA4B566"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_bimgur-Integration-Test-RepositoryService">
+    <bpmndi:BPMNPlane bpmnElement="bimgur-Integration-Test-RepositoryService" id="BPMNPlane_bimgur-Integration-Test-RepositoryService">
+      <bpmndi:BPMNShape bpmnElement="sid-5A67DED4-A07D-46B3-B93B-ECB2F694FCA0" id="BPMNShape_sid-5A67DED4-A07D-46B3-B93B-ECB2F694FCA0">
+        <omgdc:Bounds height="30.0" width="30.0" x="152.5" y="144.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-B51FA93A-B49F-4312-AF04-47DF0564008A" id="BPMNShape_sid-B51FA93A-B49F-4312-AF04-47DF0564008A">
+        <omgdc:Bounds height="80.0" width="100.0" x="240.0" y="119.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-A8C8ADBA-2920-46B7-B931-336E3DA4B566" id="BPMNShape_sid-A8C8ADBA-2920-46B7-B931-336E3DA4B566">
+        <omgdc:Bounds height="30.0" width="30.0" x="390.0" y="144.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-4D76923A-2406-406A-A19A-F1A5AA49E0C8" id="BPMNEdge_sid-4D76923A-2406-406A-A19A-F1A5AA49E0C8">
+        <omgdi:waypoint x="340.0" y="159.0"></omgdi:waypoint>
+        <omgdi:waypoint x="390.0" y="159.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-EF8E1611-A9DE-47FF-AF75-199E85EF48FD" id="BPMNEdge_sid-EF8E1611-A9DE-47FF-AF75-199E85EF48FD">
+        <omgdi:waypoint x="182.5" y="159.0"></omgdi:waypoint>
+        <omgdi:waypoint x="240.0" y="159.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

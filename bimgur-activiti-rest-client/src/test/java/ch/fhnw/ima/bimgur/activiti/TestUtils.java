@@ -1,7 +1,12 @@
 package ch.fhnw.ima.bimgur.activiti;
 
+import ch.fhnw.ima.bimgur.activiti.model.Deployment;
+import ch.fhnw.ima.bimgur.activiti.model.DeploymentId;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineConfiguration;
+import org.activiti.engine.repository.DeploymentBuilder;
+
+import java.util.List;
 
 public interface TestUtils {
 
@@ -21,5 +26,23 @@ public interface TestUtils {
                 .setJdbcUrl(DB_URL)
                 .buildProcessEngine();
     }
+
+    static void resetDeployments() {
+        TestUtils.client().getRepositoryService().getDeployments()
+                .map(Deployment::getId)
+                .map(DeploymentId::getRaw)
+                .forEach(TestUtils.processEngine().getRepositoryService()::deleteDeployment
+                );
+
+    }
+
+    static void loadAndDeployTestDeployments(List<String> workflowResources) {
+        DeploymentBuilder deploymentBuilder = TestUtils.processEngine().getRepositoryService().createDeployment();
+        workflowResources.forEach(
+                deploymentBuilder::addClasspathResource
+        );
+        deploymentBuilder.deploy();
+    }
+
 
 }

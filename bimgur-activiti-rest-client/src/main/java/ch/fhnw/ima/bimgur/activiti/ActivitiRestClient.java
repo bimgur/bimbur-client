@@ -70,7 +70,9 @@ public final class ActivitiRestClient {
                 .build();
     }
 
-    public RepositoryService getRepositoryServices() {
+    public RepositoryService getRepositoryService() {
         return repositoryServices.get();
     }
+
+
 }
