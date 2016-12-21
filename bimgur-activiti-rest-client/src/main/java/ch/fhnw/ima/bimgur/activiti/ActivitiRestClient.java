@@ -2,6 +2,7 @@ package ch.fhnw.ima.bimgur.activiti;
 
 import ch.fhnw.ima.bimgur.activiti.service.IdentityService;
 import ch.fhnw.ima.bimgur.activiti.service.RepositoryService;
+import ch.fhnw.ima.bimgur.activiti.service.RuntimeService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -17,10 +18,12 @@ public final class ActivitiRestClient {
 
     private final Lazy<IdentityService> identityService;
     private final Lazy<RepositoryService> repositoryServices;
+    private final Lazy<RuntimeService> runtimeServices;
 
     private ActivitiRestClient(Retrofit retrofit) {
         this.identityService = Lazy.of(() -> retrofit.create(IdentityService.class));
         this.repositoryServices = Lazy.of(() -> retrofit.create(RepositoryService.class));
+        this.runtimeServices = Lazy.of(() -> retrofit.create(RuntimeService.class));
     }
 
     public static ActivitiRestClient connect(String baseUrl, String username, String password) {
@@ -75,4 +78,7 @@ public final class ActivitiRestClient {
     }
 
 
+    public RuntimeService getRuntimeService() {
+        return this.runtimeServices.get();
+    }
 }
