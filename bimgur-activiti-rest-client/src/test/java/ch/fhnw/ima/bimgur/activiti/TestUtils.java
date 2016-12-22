@@ -13,7 +13,7 @@ import java.util.List;
 public interface TestUtils {
 
     String HOST = "localhost"; // TODO: make configurable on OSX
-    String BASE_URL = "http://" + HOST + ":8080/activiti-rest/service/";
+    String BASE_URL = "http://" + HOST + ":4444/activiti-rest/service/";
     String USER_NAME = "kermit";
     String PASSWORD = "kermit";
     String DB_URL = "jdbc:postgresql://" + HOST + ":5433/bimgurdb";
