@@ -1,6 +1,7 @@
 package ch.fhnw.ima.bimgur.activiti.service;
 
 import ch.fhnw.ima.bimgur.activiti.model.ProcessInstance;
+import ch.fhnw.ima.bimgur.activiti.model.StartProcessInstanceById;
 import ch.fhnw.ima.bimgur.activiti.model.StartProcessInstanceByKey;
 import ch.fhnw.ima.bimgur.activiti.model.Task;
 import ch.fhnw.ima.bimgur.activiti.model.util.ResultList;
@@ -30,5 +31,9 @@ public interface RuntimeService {
     @Headers("Content-type: application/json")
     @POST("runtime/process-instances")
     Observable<ProcessInstance> startProcessInstance(@Body StartProcessInstanceByKey startData);
+
+    @Headers("Content-type: application/json")
+    @POST("runtime/process-instances")
+    Observable<ProcessInstance> startProcessInstance(@Body StartProcessInstanceById startData);
 
 }

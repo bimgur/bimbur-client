@@ -4,14 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public final class StartProcessInstanceByKey {
 
+    @JsonProperty("processDefinitionKey")
     private final String processDefinitionKey;
 
-    public StartProcessInstanceByKey(@JsonProperty("processDefinitionKey") String processDefinitionKey) {
+    public StartProcessInstanceByKey(String processDefinitionKey) {
         this.processDefinitionKey = processDefinitionKey;
-    }
-
-    public String getProcessDefinitionKey() {
-        return processDefinitionKey;
     }
 
 }

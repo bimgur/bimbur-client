@@ -2,9 +2,12 @@ package ch.fhnw.ima.bimgur.activiti.service;
 
 import ch.fhnw.ima.bimgur.activiti.IntegrationTest;
 import ch.fhnw.ima.bimgur.activiti.TestUtils;
+import ch.fhnw.ima.bimgur.activiti.model.ProcessDefinitionId;
 import ch.fhnw.ima.bimgur.activiti.model.ProcessInstance;
+import ch.fhnw.ima.bimgur.activiti.model.StartProcessInstanceById;
 import ch.fhnw.ima.bimgur.activiti.model.StartProcessInstanceByKey;
 import io.reactivex.Observable;
+import org.activiti.engine.repository.ProcessDefinition;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +22,7 @@ public class RuntimeServiceTest {
     }
 
     @Test
-    void startProcessInstance() {
+    void startProcessInstanceByKey() {
         String processDefinitionKey = "bimgur-demo-japanese-numbers";
         StartProcessInstanceByKey startData = new StartProcessInstanceByKey(processDefinitionKey);
         Observable<ProcessInstance> result = RuntimeServiceTest.runtimeService.startProcessInstance(startData);
@@ -27,6 +30,19 @@ public class RuntimeServiceTest {
             .map(ProcessInstance::getProcessDefinitionUrl)
             .test()
             .assertValue(url -> url.contains(processDefinitionKey));
+    }
+
+    @Test
+    void startProcessInstanceById() {
+        org.activiti.engine.RepositoryService repositoryService = TestUtils.processEngine().getRepositoryService();
+        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().list().get(0);
+        ProcessDefinitionId processDefinitionId = new ProcessDefinitionId(processDefinition.getId());
+        StartProcessInstanceById startData = new StartProcessInstanceById(processDefinitionId);
+        Observable<ProcessInstance> result = RuntimeServiceTest.runtimeService.startProcessInstance(startData);
+        result
+            .map(ProcessInstance::getProcessDefinitionUrl)
+            .test()
+            .assertValue(url -> url.contains(processDefinition.getKey()));
     }
 
 }
