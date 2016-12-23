@@ -1,9 +1,5 @@
 package ch.fhnw.ima.bimgur.activiti;
 
-import ch.fhnw.ima.bimgur.activiti.model.Deployment;
-import ch.fhnw.ima.bimgur.activiti.model.DeploymentId;
-import ch.fhnw.ima.bimgur.activiti.model.ProcessInstance;
-import ch.fhnw.ima.bimgur.activiti.model.ProcessInstanceId;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.repository.DeploymentBuilder;
@@ -30,12 +26,13 @@ public interface TestUtils {
     }
 
     static void resetDeployments() {
-        deleteAllProcessInstances();
-        deleteAllTasks();
-        TestUtils.client().getRepositoryService().getDeployments()
-                .map(Deployment::getId)
-                .map(DeploymentId::getRaw)
-                .forEach(TestUtils.processEngine().getRepositoryService()::deleteDeployment
+
+        TestUtils.processEngine().
+                getRepositoryService().createDeploymentQuery().list()
+                .forEach(deployment ->
+                        TestUtils.processEngine()
+                                .getRepositoryService()
+                                .deleteDeployment(deployment.getId(), true)
                 );
 
     }
@@ -43,15 +40,12 @@ public interface TestUtils {
     static void deleteAllTasks() {
         TestUtils.processEngine().getTaskService().createTaskQuery().list()
                 .forEach(task -> TestUtils.processEngine().getTaskService().deleteTask(task.getId(), true));
-
     }
 
     static void deleteAllProcessInstances() {
-        TestUtils.client().getRuntimeService()
-                .getProcessInstances()
-                .map(ProcessInstance::getId)
-                .map(ProcessInstanceId::getRaw)
-                .forEach(id -> TestUtils.processEngine().getRuntimeService().deleteProcessInstance(id, null));
+        TestUtils.processEngine().getRuntimeService()
+                .createProcessInstanceQuery().list()
+                .forEach(pi -> TestUtils.processEngine().getRuntimeService().deleteProcessInstance(pi.getProcessInstanceId(), null));
     }
 
     static void loadAndDeployTestDeployments(List<String> workflowResources) {

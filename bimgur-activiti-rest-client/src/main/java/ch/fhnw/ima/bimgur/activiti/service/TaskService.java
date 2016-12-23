@@ -1,8 +1,6 @@
 package ch.fhnw.ima.bimgur.activiti.service;
 
-import ch.fhnw.ima.bimgur.activiti.model.Task;
-import ch.fhnw.ima.bimgur.activiti.model.TaskClaimDTO;
-import ch.fhnw.ima.bimgur.activiti.model.TaskCompleteDTO;
+import ch.fhnw.ima.bimgur.activiti.model.*;
 import ch.fhnw.ima.bimgur.activiti.model.util.ResultList;
 import ch.fhnw.ima.bimgur.activiti.service.util.ResultListExtractor;
 import io.reactivex.Observable;
@@ -10,23 +8,60 @@ import okhttp3.ResponseBody;
 import retrofit2.http.*;
 
 public interface TaskService {
-    /*
-     - assignee
- - processInstanceId
- - candidateUser*/
-
 
     @GET("runtime/tasks")
-    Observable<ResultList<Task>> getTasksResultList(@Query("assignee") String assigneeUserId);
+    Observable<ResultList<Task>> getTasksResultList(@Query("assignee") String assigneeUserId,
+                                                    @Query("processInstanceId") String processInstaneId,
+                                                    @Query("candidateUser") String candidateUserId);
 
     default Observable<Task> getTasks() {
-        return ResultListExtractor.extract(getTasksResultList(null));
+        return ResultListExtractor.extract(
+                getTasksResultList(
+                        null,
+                        null,
+                        null
+                ));
     }
 
-    default Observable<Task> getFilteredTasks(@Query("assignee") String assigneeUserId) {
-        return ResultListExtractor.extract(getTasksResultList(assigneeUserId));
-
+    default Observable<Task> getFilteredTasks(UserId assignee,
+                                              ProcessInstanceId processInstanceId,
+                                              UserId candidate) {
+        return ResultListExtractor.extract(
+                getTasksResultList(
+                        (assignee == null) ? null : assignee.getRaw(),
+                        (processInstanceId == null) ? null : processInstanceId.getRaw(),
+                        (candidate == null) ? null : candidate.getRaw()
+                ));
     }
+
+
+    default Observable<Task> getTasksByAssignee(UserId assignee) {
+        return ResultListExtractor
+                .extract(getTasksResultList(
+                        assignee.getRaw(),
+                        null,
+                        null
+                ));
+    }
+
+    default Observable<Task> getTasksByProcessInstanceId(ProcessInstanceId processInstanceId) {
+        return ResultListExtractor
+                .extract(getTasksResultList(
+                        null,
+                        processInstanceId.getRaw(),
+                        null
+                ));
+    }
+
+    default Observable<Task> getTasksByCandidateUser(UserId candidateUser) {
+        return ResultListExtractor
+                .extract(getTasksResultList(
+                        null,
+                        null,
+                        candidateUser.getRaw()
+                ));
+    }
+
 
     /**
      * Called when the task is successfully executed.
