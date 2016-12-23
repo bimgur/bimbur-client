@@ -2,17 +2,16 @@ package ch.fhnw.ima.bimgur.activiti.service;
 
 import ch.fhnw.ima.bimgur.activiti.IntegrationTest;
 import ch.fhnw.ima.bimgur.activiti.TestUtils;
-import ch.fhnw.ima.bimgur.activiti.model.*;
+import ch.fhnw.ima.bimgur.activiti.model.ProcessDefinitionId;
+import ch.fhnw.ima.bimgur.activiti.model.ProcessInstance;
+import ch.fhnw.ima.bimgur.activiti.model.StartProcessInstanceById;
+import ch.fhnw.ima.bimgur.activiti.model.StartProcessInstanceByKey;
 import io.reactivex.Observable;
-import okhttp3.ResponseBody;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 @IntegrationTest
 public class RuntimeServiceTest {
@@ -57,40 +56,5 @@ public class RuntimeServiceTest {
                 .assertValue(url -> url.contains(processDefinition.getKey()));
     }
 
-    @Test
-    void completeTask() {
-        org.activiti.engine.task.Task task = TestUtils.processEngine().getTaskService().createTaskQuery().list().get(0);
-        Observable<ResponseBody> testObserver = runtimeService
-                .complete(
-                        task.getId(),
-                        new TaskCompleteDTO());
-        testObserver.subscribe(responseBody -> {
-            org.activiti.engine.task.Task task1 = TestUtils.processEngine().getTaskService().createTaskQuery().list().get(0);
-            assertNotEquals(task, task1);
-        });
-
-        runtimeService
-                .complete(
-                        TestUtils.processEngine().getTaskService().createTaskQuery().list().get(0).getId(),
-                        new TaskCompleteDTO())
-                .test().assertComplete();
-
-    }
-
-    @Test
-    void claimTask() {
-        org.activiti.engine.task.Task task = TestUtils.processEngine().getTaskService().createTaskQuery().list().get(0);
-        org.activiti.engine.identity.User user = TestUtils.processEngine().getIdentityService().createUserQuery().list().get(0);
-        runtimeService.claim(task.getId(), new TaskClaimDTO(new UserId(user.getId())))
-                .test()
-                .assertComplete();
-
-
-        org.activiti.engine.task.Task assigneedTask
-                = TestUtils.processEngine().getTaskService().createTaskQuery().taskAssignee(user.getId()).list().get(0);
-
-        assertEquals(task.getId(), assigneedTask.getId());
-
-    }
 
 }

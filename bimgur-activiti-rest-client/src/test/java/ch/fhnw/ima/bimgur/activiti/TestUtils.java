@@ -31,11 +31,18 @@ public interface TestUtils {
 
     static void resetDeployments() {
         deleteAllProcessInstances();
+        deleteAllTasks();
         TestUtils.client().getRepositoryService().getDeployments()
                 .map(Deployment::getId)
                 .map(DeploymentId::getRaw)
                 .forEach(TestUtils.processEngine().getRepositoryService()::deleteDeployment
                 );
+
+    }
+
+    static void deleteAllTasks() {
+        TestUtils.processEngine().getTaskService().createTaskQuery().list()
+                .forEach(task -> TestUtils.processEngine().getTaskService().deleteTask(task.getId(), true));
 
     }
 
