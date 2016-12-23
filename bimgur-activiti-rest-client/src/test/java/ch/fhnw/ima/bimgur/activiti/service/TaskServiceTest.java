@@ -45,6 +45,24 @@ public class TaskServiceTest {
     }
 
     @Test
+    void getFilteredTasks() {
+        org.activiti.engine.identity.User user = TestUtils.processEngine().getIdentityService().createUserQuery().list().get(0);
+        TestUtils.processEngine().getTaskService().setAssignee(
+                TestUtils.processEngine().getTaskService().createTaskQuery().list().get(0).getId(),
+                user.getId()
+        );
+
+        taskService.getFilteredTasks(user.getId())
+                .elementAt(0)
+                .map(Task::getId)
+                .map(TaskId::getRaw)
+                .test().assertResult(
+                TestUtils.processEngine().getTaskService().createTaskQuery()
+                        .list().get(0).getId()
+        );
+    }
+
+    @Test
     void completeTask() {
         org.activiti.engine.task.Task task = TestUtils.processEngine().getTaskService().createTaskQuery().list().get(0);
         Observable<ResponseBody> testObserver = taskService

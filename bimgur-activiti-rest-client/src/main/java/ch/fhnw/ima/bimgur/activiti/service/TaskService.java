@@ -10,12 +10,22 @@ import okhttp3.ResponseBody;
 import retrofit2.http.*;
 
 public interface TaskService {
+    /*
+     - assignee
+ - processInstanceId
+ - candidateUser*/
+
 
     @GET("runtime/tasks")
-    Observable<ResultList<Task>> getTasksResultList();
+    Observable<ResultList<Task>> getTasksResultList(@Query("assignee") String assigneeUserId);
 
     default Observable<Task> getTasks() {
-        return ResultListExtractor.extract(getTasksResultList());
+        return ResultListExtractor.extract(getTasksResultList(null));
+    }
+
+    default Observable<Task> getFilteredTasks(@Query("assignee") String assigneeUserId) {
+        return ResultListExtractor.extract(getTasksResultList(assigneeUserId));
+
     }
 
     /**
