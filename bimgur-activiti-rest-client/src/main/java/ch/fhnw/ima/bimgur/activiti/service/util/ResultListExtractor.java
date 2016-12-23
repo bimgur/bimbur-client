@@ -7,4 +7,5 @@ public interface ResultListExtractor {
     static <T> Observable<T> extract(Observable<ResultList<T>> observableResultList) {
         return observableResultList.flatMap(resultList -> Observable.fromIterable(resultList.getData()));
     }
+
 }

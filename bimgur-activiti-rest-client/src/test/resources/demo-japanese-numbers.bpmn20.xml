@@ -4,8 +4,8 @@
     <startEvent id="startEvent"></startEvent>
     <userTask id="infoTask" name="Info">
       <extensionElements>
-        <activiti:formProperty id="info" name="Info" type="string" expression="Japanese Numbers" writable="false"></activiti:formProperty>
-        <activiti:formProperty id="round" name="Iteration" type="long" expression="${iteration}" writable="false"></activiti:formProperty>
+        <activiti:formProperty id="info" name="FormProperty1" type="string" expression="Japanese Numbers" writable="false"></activiti:formProperty>
+        <activiti:formProperty id="round" name="FormProperty2" type="long" expression="a" writable="false"></activiti:formProperty>
       </extensionElements>
     </userTask>
     <parallelGateway id="parallelgateway1" name="Fork Image Analysis"></parallelGateway>
