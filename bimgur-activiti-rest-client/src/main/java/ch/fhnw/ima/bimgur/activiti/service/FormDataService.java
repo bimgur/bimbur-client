@@ -1,10 +1,11 @@
 package ch.fhnw.ima.bimgur.activiti.service;
 
 import ch.fhnw.ima.bimgur.activiti.model.FormData;
+import ch.fhnw.ima.bimgur.activiti.model.FormDataByTaskIdDTO;
 import ch.fhnw.ima.bimgur.activiti.model.TaskId;
 import io.reactivex.Observable;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
+import okhttp3.ResponseBody;
+import retrofit2.http.*;
 
 public interface FormDataService {
 
@@ -15,6 +16,10 @@ public interface FormDataService {
         return getFormDataList(taskId.getRaw());
 
     }
+
+    @Headers("Content-type: application/json")
+    @POST("form/form-data")
+    Observable<ResponseBody> addFormData(@Body FormDataByTaskIdDTO formDataByTaskIdDTO);
 
 
 

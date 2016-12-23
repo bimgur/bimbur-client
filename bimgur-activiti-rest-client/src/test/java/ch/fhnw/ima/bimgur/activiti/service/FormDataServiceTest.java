@@ -2,6 +2,7 @@ package ch.fhnw.ima.bimgur.activiti.service;
 
 import ch.fhnw.ima.bimgur.activiti.TestUtils;
 import ch.fhnw.ima.bimgur.activiti.model.FormData;
+import ch.fhnw.ima.bimgur.activiti.model.FormDataByTaskIdDTO;
 import ch.fhnw.ima.bimgur.activiti.model.FormProperty;
 import ch.fhnw.ima.bimgur.activiti.model.TaskId;
 import org.activiti.engine.ProcessEngine;
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
+import java.util.*;
 
 /**
  * Created by fabrizio.parrillo on 23.12.2016.
@@ -21,7 +22,7 @@ public class FormDataServiceTest {
     private static final ProcessEngine PROCESS_ENGINE = TestUtils.processEngine();
 
 
-@BeforeAll
+    @BeforeAll
     static void beforeAll() {
         formDataService = TestUtils.client().getFormDataService();
         TestUtils.resetDeployments();
@@ -43,24 +44,52 @@ public class FormDataServiceTest {
     }
 
 
-
-   @Test
-    void getFormData(){
-
-
-       Task task = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
-       org.activiti.engine.identity.User user = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
-       PROCESS_ENGINE.getTaskService().claim(
-               task.getId(),
-               user.getId()
-       );
+    @Test
+    void getFormData() {
 
 
-       formDataService.getFrom(new TaskId(task.getId()))
-               .map(FormData::getFormProperties)
-               .flatMap(formProperties -> io.reactivex.Observable.fromIterable(formProperties))
-               .map(FormProperty::getName)
-               .test().assertResult("FormProperty1", "FormProperty2");
-   }
+        Task task = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
+        org.activiti.engine.identity.User user = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
+        PROCESS_ENGINE.getTaskService().claim(
+                task.getId(),
+                user.getId()
+        );
+
+
+        formDataService.getFrom(new TaskId(task.getId()))
+                .map(FormData::getFormProperties)
+                .flatMap(formProperties -> io.reactivex.Observable.fromIterable(formProperties))
+                .map(FormProperty::getName)
+                .test().assertResult("FormProperty1", "FormProperty2");
+    }
+
+    @Test
+    void addFormData() {
+
+
+        Task task = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
+        org.activiti.engine.identity.User user = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
+        PROCESS_ENGINE.getTaskService().claim(
+                task.getId(),
+                user.getId()
+        );
+
+
+        Map<String, String> prop = new HashMap<>();
+        prop.put("a", "1");
+        prop.put("b", "2");
+
+        List< Map<String, String>> proplist = new ArrayList<>();
+        formDataService.addFormData(
+                new FormDataByTaskIdDTO(new TaskId(task.getId()),
+                        proplist
+                )).test().assertComplete();
+
+        formDataService.getFrom(new TaskId(task.getId()))
+                .map(FormData::getFormProperties)
+                .flatMap(formProperties -> io.reactivex.Observable.fromIterable(formProperties))
+                .map(FormProperty::getName)
+                .test().assertResult("FormProperty1", "FormProperty2");
+    }
 
 }
