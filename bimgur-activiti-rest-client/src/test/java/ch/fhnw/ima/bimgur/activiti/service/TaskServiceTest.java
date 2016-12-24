@@ -1,5 +1,6 @@
 package ch.fhnw.ima.bimgur.activiti.service;
 
+import ch.fhnw.ima.bimgur.activiti.IntegrationTest;
 import ch.fhnw.ima.bimgur.activiti.TestUtils;
 import ch.fhnw.ima.bimgur.activiti.model.*;
 import io.reactivex.Observable;
@@ -17,11 +18,11 @@ import static org.junit.Assert.assertNotEquals;
 /**
  * Created by fabrizio.parrillo on 23.12.2016.
  */
+@IntegrationTest
 public class TaskServiceTest {
 
     private static TaskService taskService;
     private static final ProcessEngine PROCESS_ENGINE = TestUtils.processEngine();
-
 
     @BeforeAll
     static void beforeAll() {
@@ -43,7 +44,6 @@ public class TaskServiceTest {
         PROCESS_ENGINE.getRuntimeService()
                 .startProcessInstanceByKey("bimgur-demo-japanese-numbers");
     }
-
 
     @Test
     void getTasks() {

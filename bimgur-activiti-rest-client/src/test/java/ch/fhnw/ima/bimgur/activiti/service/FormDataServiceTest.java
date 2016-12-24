@@ -1,5 +1,6 @@
 package ch.fhnw.ima.bimgur.activiti.service;
 
+import ch.fhnw.ima.bimgur.activiti.IntegrationTest;
 import ch.fhnw.ima.bimgur.activiti.TestUtils;
 import ch.fhnw.ima.bimgur.activiti.model.FormData;
 import ch.fhnw.ima.bimgur.activiti.model.FormDataByTaskIdDTO;
@@ -16,11 +17,11 @@ import java.util.*;
 /**
  * Created by fabrizio.parrillo on 23.12.2016.
  */
+@IntegrationTest
 public class FormDataServiceTest {
 
     private static FormDataService formDataService;
     private static final ProcessEngine PROCESS_ENGINE = TestUtils.processEngine();
-
 
     @BeforeAll
     static void beforeAll() {
@@ -33,7 +34,6 @@ public class FormDataServiceTest {
                 .startProcessInstanceByKey("bimgur-demo-japanese-numbers");
     }
 
-
     @BeforeEach
     void beforeEach() {
         TestUtils.deleteAllProcessInstances();
@@ -43,10 +43,8 @@ public class FormDataServiceTest {
                 .startProcessInstanceByKey("bimgur-demo-japanese-numbers");
     }
 
-
     @Test
     void getFormData() {
-
 
         Task task = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
         org.activiti.engine.identity.User user = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
@@ -66,14 +64,12 @@ public class FormDataServiceTest {
     @Test
     void addFormData() {
 
-
         Task task = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
         org.activiti.engine.identity.User user = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
         PROCESS_ENGINE.getTaskService().claim(
                 task.getId(),
                 user.getId()
         );
-
 
         Map<String, String> prop = new HashMap<>();
         prop.put("a", "1");
