@@ -12,7 +12,7 @@ public interface TestUtils {
     String BASE_URL = "http://" + HOST + ":8080/activiti-rest/service/";
     String USER_NAME = "kermit";
     String PASSWORD = "kermit";
-    String DB_URL = "jdbc:postgresql://" + HOST + ":5432/bimgurdb";
+    String DB_URL = "jdbc:postgresql://" + HOST + ":5433/bimgurdb";
 
     static ActivitiRestClient client() {
         return ActivitiRestClient.connect(BASE_URL, USER_NAME, PASSWORD);
