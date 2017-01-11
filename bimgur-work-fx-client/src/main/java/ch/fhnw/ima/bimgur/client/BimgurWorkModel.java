@@ -1,6 +1,7 @@
 package ch.fhnw.ima.bimgur.client;
 
 import ch.fhnw.ima.bimgur.activiti.model.User;
+import ch.fhnw.ima.bimgur.client.model.RichTask;
 import ch.fhnw.ima.bimgur.client.status.StatusBarPresentationModel;
 import ch.fhnw.ima.bimgur.util.fx.notification.Notification;
 import javafx.beans.property.IntegerProperty;
@@ -16,12 +17,12 @@ final class BimgurWorkModel implements StatusBarPresentationModel {
 
     private final BimgurWorkConfig config;
     private final ObjectProperty<Option<User>> currentUserProperty = new SimpleObjectProperty<>(Option.none());
-    private final ObservableList<Notification> notifications;
-    private final IntegerProperty concurrentTaskCount = new SimpleIntegerProperty();
+    private final ObservableList<Notification> notifications = FXCollections.observableArrayList();
+    private final IntegerProperty concurrentOperationCount = new SimpleIntegerProperty();
+    private final ObservableList<RichTask> tasks = FXCollections.observableArrayList();
 
     BimgurWorkModel(BimgurWorkConfig config) {
         this.config = config;
-        this.notifications = FXCollections.observableArrayList();
     }
 
     ObjectProperty<Option<User>> currentUserProperty() {
@@ -36,17 +37,21 @@ final class BimgurWorkModel implements StatusBarPresentationModel {
         return notifications;
     }
 
+    public ObservableList<RichTask> getTasks() {
+        return tasks;
+    }
+
     @Override
     public String getStatusBarText() {
         return getServerUrl();
     }
 
-    public IntegerProperty concurrentTaskCountProperty() {
-        return concurrentTaskCount;
+    public IntegerProperty concurrentOperationCountProperty() {
+        return concurrentOperationCount;
     }
 
     public ObservableBooleanValue isBusy() {
-        return concurrentTaskCount.greaterThan(0);
+        return concurrentOperationCount.greaterThan(0);
     }
 
 }
