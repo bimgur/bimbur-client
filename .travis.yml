@@ -11,10 +11,12 @@ jdk:
   - oraclejdk8
 
 before_script:
-  - gradle build -x test
+  - ./gradlew build -x test
   - docker build --tag=bimgur .
   - docker run -d -p 8080:8080 -p 5433:5432 bimgur
 
+script:
+  - ./gradlew test -PrunIntegrationTests
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
