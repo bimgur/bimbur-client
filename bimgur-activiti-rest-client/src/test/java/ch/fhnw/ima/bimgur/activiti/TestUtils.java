@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface TestUtils {
 
-    String HOST = "localhost"; // TODO: make configurable on OSX
+    String HOST = "localhost"; // TODO: make configurable on OSX (192.168.99.100)
     String BASE_URL = "http://" + HOST + ":8080/activiti-rest/service/";
     String USER_NAME = "kermit";
     String PASSWORD = "kermit";
@@ -55,6 +55,5 @@ public interface TestUtils {
         );
         deploymentBuilder.deploy();
     }
-
 
 }

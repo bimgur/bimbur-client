@@ -7,38 +7,40 @@ import ch.fhnw.ima.bimgur.client.login.LoginController;
 import ch.fhnw.ima.bimgur.util.fx.notification.Notification;
 import ch.fhnw.ima.bimgur.util.fx.notification.NotificationController;
 import ch.fhnw.ima.bimgur.util.fx.notification.NotificationPopupDispatcher;
+import io.reactivex.Single;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import javaslang.control.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-import java.util.function.Consumer;
-
-public final class BimgurWorkController implements LoginController, NotificationController {
+public final class BimgurWorkController implements NotificationController, LoginController {
 
     private static final Logger LOG = LoggerFactory.getLogger(BimgurWorkController.class);
+    private static final String ACTIVITI_REST_SERVICE_URL = "/activiti-rest/service/";
 
     private final BimgurWorkModel model;
     private final String baseUrl;
 
     BimgurWorkController(Stage popupOwner, BimgurWorkModel model) {
         this.model = model;
-        this.baseUrl = model.getServerUrl() + "/activiti-rest/service/";
+        this.baseUrl = model.getServerUrl() + ACTIVITI_REST_SERVICE_URL;
 
         model.getNotifications().addListener(new NotificationPopupDispatcher(popupOwner));
     }
 
     @Override
-    public void login(String userId) {
+    public Single<User> login(String userId) {
         IdentityService identityService = ActivitiRestClient.connect(baseUrl, userId, userId).getIdentityService();
-        Call<User> getUserCall = identityService.getUser(userId);
-        dispatch("Login", getUserCall, validUser ->
-                model.currentUserProperty().setValue(Option.of(validUser))
-        );
+        Single<User> singleUser = identityService.getUser(userId);
+        singleUser
+                .doOnSubscribe(disposable -> startProgress())
+                .doFinally(this::stopProgress)
+                .subscribe(
+                        validUser -> Platform.runLater(() -> model.currentUserProperty().setValue(Option.of(validUser))),
+                        t -> notifyError("Login failed", t)
+                );
+        return singleUser;
     }
 
     void refresh() {
@@ -83,36 +85,9 @@ public final class BimgurWorkController implements LoginController, Notification
         Platform.runLater(() -> model.getNotifications().add(notification));
     }
 
-    /**
-     * Dispatches the given call asynchronously:
-     * - keeping track of progress
-     * - logging success/failure with the given action description
-     * - calling onSuccess on the FX application thread
-     */
-    private <T> void dispatch(String actionDesc, Call<T> call, Consumer<T> onSuccess) {
-
-        Callback<T> delegate = new OnSuccessFxCallback<T>(actionDesc) {
-            @Override
-            void onSuccess(T result) {
-                onSuccess.accept(result);
-            }
-        };
-
-        startProgress();
-        call.enqueue(new Callback<T>() {
-            @Override
-            public void onResponse(Call<T> call, Response<T> response) {
-                stopProgress();
-                delegate.onResponse(call, response);
-            }
-
-            @Override
-            public void onFailure(Call<T> call, Throwable t) {
-                stopProgress();
-                delegate.onFailure(call, t);
-            }
-        });
-    }
+    //------------------------------------------------
+    // Progress Handling
+    //------------------------------------------------
 
     private void startProgress() {
         updateProgress(1);
@@ -126,45 +101,6 @@ public final class BimgurWorkController implements LoginController, Notification
         Platform.runLater(() ->
                 model.concurrentTaskCountProperty().set(model.concurrentTaskCountProperty().get() + delta)
         );
-    }
-
-    /**
-     * Convenience implementation which returns successful results on the FX application thread.
-     */
-    private abstract class OnSuccessFxCallback<T> implements Callback<T> {
-
-        private final String actionDesc;
-
-        private OnSuccessFxCallback(String actionDesc) {
-            this.actionDesc = actionDesc;
-        }
-
-        abstract void onSuccess(T result);
-
-        @Override
-        public final void onResponse(Call<T> call, Response<T> response) {
-            if (response.isSuccessful()) {
-                Platform.runLater(() -> {
-                            notifySilent(actionDesc + " successful");
-                            onSuccess(response.body());
-                        }
-                );
-            } else {
-                notifyError(actionDesc + " failed");
-                logErrorUrl(call);
-            }
-        }
-
-        @Override
-        public final void onFailure(Call<T> call, Throwable t) {
-            notifyError(actionDesc + " failed", t);
-            logErrorUrl(call);
-        }
-
-        private void logErrorUrl(Call<T> call) {
-            LOG.error(actionDesc + " URL: " + call.request().url());
-        }
-
     }
 
 }

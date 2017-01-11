@@ -5,15 +5,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public final class User {
 
+    public static final User NONE = new User(UserId.NONE.getRaw(), "", "");
+
     private final UserId id;
     private final String firstName;
     private final String lastName;
 
     @JsonCreator
     public User(@JsonProperty("id") String id, @JsonProperty("firstName") String firstName, @JsonProperty("lastName") String lastName) {
-        this.id = new UserId(id);
-        this.firstName = firstName;
-        this.lastName = lastName;
+        if (UserId.NONE.getRaw().equals(id)) {
+            this.id = UserId.NONE;
+            this.firstName = "";
+            this.lastName = "";
+        } else {
+            this.id = new UserId(id);
+            this.firstName = firstName;
+            this.lastName = lastName;
+        }
     }
 
     public UserId getId() {
