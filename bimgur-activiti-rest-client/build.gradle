@@ -17,11 +17,12 @@ dependencies {
     compile libraries.retrofit
     compile libraries.rxJava
     compile libraries.retrofitRxJavaAdapter
+    compile libraries.okhttpLoggingInterceptor
+    compile libraries.slf4j
 
     testCompile libraries.junit5
     testCompile libraries.activiti
     testCompile libraries.postgres
-    testCompile libraries.slf4j
     testCompile libraries.log4j
 }
 
