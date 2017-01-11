@@ -1,6 +1,13 @@
 # Use container-based infrastructure
 sudo: false
 
+services:
+  - docker
+
+before_install:
+  - docker build --tag=bimgur .
+  - docker run -p 8080:8080 -p 5432:5432 bimgur
+
 language: java
 
 jdk:
