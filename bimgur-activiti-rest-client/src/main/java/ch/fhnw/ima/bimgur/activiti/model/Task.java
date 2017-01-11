@@ -14,7 +14,7 @@ public final class Task {
     public Task(@JsonProperty("id") String id,
                 @JsonProperty("processInstanceId") String processInstanceId,
                 @JsonProperty("name") String name,
-                @JsonProperty("assigneeId") String assigneeId) {
+                @JsonProperty("assignee") String assigneeId) {
 
         this.id = new TaskId(id);
         this.processInstanceId = new ProcessInstanceId(processInstanceId);
