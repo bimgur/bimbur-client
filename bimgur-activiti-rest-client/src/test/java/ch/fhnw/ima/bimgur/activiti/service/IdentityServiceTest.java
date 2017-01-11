@@ -6,6 +6,7 @@ import ch.fhnw.ima.bimgur.activiti.model.User;
 import ch.fhnw.ima.bimgur.activiti.model.UserId;
 import io.reactivex.Observable;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -19,7 +20,7 @@ public class IdentityServiceTest {
         service = TestUtils.client().getIdentityService();
     }
 
-    //@Test
+    @Test
     void getUsers() {
         Observable<User> users = service.getUsers();
         users.map(User::getId).test()
@@ -30,7 +31,7 @@ public class IdentityServiceTest {
                 );
     }
 
-    //@Test
+    @Test
     void getUserExisting() {
         service.getUser("fozzie").map(User::getId).test()
                 .assertResult(
@@ -38,7 +39,7 @@ public class IdentityServiceTest {
                 );
     }
 
-    //@Test
+    @Test
     void getUserUnknown() throws IOException {
         service.getUser("unknown").map(User::getId).test()
                 .assertError(t -> t.getMessage().startsWith("HTTP 404"));
