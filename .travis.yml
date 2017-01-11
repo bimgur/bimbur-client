@@ -13,7 +13,7 @@ jdk:
 before_script:
   - gradle build -x test
   - docker build --tag=bimgur .
-  - docker run -p 8080:8080 -p 5433:5432 bimgur
+  - docker run -d -p 8080:8080 -p 5433:5432 bimgur
 
 
 before_cache:
