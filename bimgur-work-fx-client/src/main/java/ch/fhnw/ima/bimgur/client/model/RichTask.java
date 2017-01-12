@@ -1,6 +1,5 @@
 package ch.fhnw.ima.bimgur.client.model;
 
-import ch.fhnw.ima.bimgur.activiti.model.ProcessInstance;
 import ch.fhnw.ima.bimgur.activiti.model.Task;
 import ch.fhnw.ima.bimgur.activiti.model.TaskId;
 import ch.fhnw.ima.bimgur.activiti.model.User;
@@ -13,12 +12,10 @@ public final class RichTask {
 
     private final Task task;
     private final User assignee;
-    private final ProcessInstance processInstance;
 
-    public RichTask(Task task, User assignee, ProcessInstance processInstance) {
+    public RichTask(Task task, User assignee) {
         this.task = task;
         this.assignee = assignee;
-        this.processInstance = processInstance;
     }
 
     public TaskId getId() {
@@ -31,10 +28,6 @@ public final class RichTask {
 
     public User getAssignee() {
         return assignee;
-    }
-
-    public ProcessInstance getProcessInstance() {
-        return processInstance;
     }
 
 }

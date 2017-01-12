@@ -1,7 +1,6 @@
 package ch.fhnw.ima.bimgur.client;
 
 import ch.fhnw.ima.bimgur.activiti.ActivitiRestClient;
-import ch.fhnw.ima.bimgur.activiti.model.ProcessInstance;
 import ch.fhnw.ima.bimgur.activiti.model.Task;
 import ch.fhnw.ima.bimgur.activiti.model.User;
 import ch.fhnw.ima.bimgur.activiti.model.UserId;
@@ -51,6 +50,7 @@ public final class BimgurWorkController implements
 
     void refresh() {
         refreshTasks();
+        model.getUsers().clear(); // will be loaded lazily
     }
 
     //------------------------------------------------
@@ -75,24 +75,44 @@ public final class BimgurWorkController implements
         return singleUser;
     }
 
+    /**
+     * Returns the requested user from the model. If it is not yet in the model, it is requested via REST (and
+     * added to the model for future re-use).
+     *
+     * @see <a href="http://blog.danlew.net/2015/06/22/loading-data-from-multiple-sources-with-rxjava">
+     *     Loading data from multiple sources with RxJava
+     *     </a>
+     */
+    private Single<User> lazyGetUser(UserId userId) {
+        if (UserId.NONE.equals(userId)) {
+            return Single.just(User.NONE);
+        } else {
+            Observable<User> fromModel = Observable.fromIterable(model.getUsers()).filter(user -> user.getId().equals(userId));
+            Observable<User> fromNetwork = services().getIdentityService().getUser(userId.getRaw()).toObservable();
+            Observable<User> fromNetworkAddingToModel = fromNetwork.doOnNext(user -> Platform.runLater(() -> model.getUsers().add(user)));
+            return fromModel
+                    .concatWith(fromNetworkAddingToModel)
+                    .firstOrError();
+        }
+    }
+
     @Override
     public Observable<RichTask> loadTasks() {
         Observable<Task> tasks = services().getTaskService().getTasks();
         Observable<RichTask> richTasks = tasks.map(t -> {
-                    // TODO: User non-blocking variants
-                    User assignee = t.getAssigneeId().equals(UserId.NONE) ? User.NONE : services().getIdentityService().getUser(t.getAssigneeId().getRaw()).blockingGet();
-                    ProcessInstance processInstance = services().getRuntimeService().getProcessInstances().filter(i -> i.getId().equals(t.getProcessInstanceId())).blockingFirst();
-                    return new RichTask(t, assignee, processInstance);
+                    // TODO: Investigate how to do this in a non-blocking fashion
+                    User assignee = lazyGetUser(t.getAssigneeId()).blockingGet();
+                    return new RichTask(t, assignee);
                 }
         );
         richTasks
                 .doOnSubscribe(disposable -> startProgress())
-                .doFinally(this::stopProgress)
+                .doFinally(() -> {
+                    notifySilent("Loading tasks successful");
+                    stopProgress();
+                })
                 .subscribe(
-                        loadedTask -> {
-                            notifySilent("Loading tasks successful");
-                            Platform.runLater(() -> model.getTasks().add(loadedTask));
-                        },
+                        loadedTask -> Platform.runLater(() -> model.getTasks().add(loadedTask)),
                         t -> notifyError("Loading tasks failed", t)
                 );
         return richTasks;

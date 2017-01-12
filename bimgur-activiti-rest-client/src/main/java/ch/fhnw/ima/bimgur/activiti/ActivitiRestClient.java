@@ -8,11 +8,16 @@ import javaslang.Lazy;
 import javaslang.jackson.datatype.JavaslangModule;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 @SuppressWarnings("WeakerAccess")
 public final class ActivitiRestClient {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ActivitiRestClient.class);
 
     private final Lazy<IdentityService> identityService;
     private final Lazy<RepositoryService> repositoryServices;
@@ -50,6 +55,8 @@ public final class ActivitiRestClient {
     }
 
     private static OkHttpClient createOkHttpClient(String username, String password) {
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(LOG::debug);
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         return new OkHttpClient.Builder()
                 .authenticator((route, response) -> {
                     String credential = Credentials.basic(username, password);
@@ -64,6 +71,7 @@ public final class ActivitiRestClient {
                             .header("Authorization", credential)
                             .build();
                 })
+                .addInterceptor(loggingInterceptor)
                 .build();
     }
 

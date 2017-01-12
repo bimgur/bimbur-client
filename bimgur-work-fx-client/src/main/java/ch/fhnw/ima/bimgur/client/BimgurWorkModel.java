@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javaslang.control.Option;
 
@@ -20,6 +21,7 @@ final class BimgurWorkModel implements StatusBarPresentationModel {
     private final ObservableList<Notification> notifications = FXCollections.observableArrayList();
     private final IntegerProperty concurrentOperationCount = new SimpleIntegerProperty();
     private final ObservableList<RichTask> tasks = FXCollections.observableArrayList();
+    private final ObservableList<User> users = FXCollections.observableArrayList();
 
     BimgurWorkModel(BimgurWorkConfig config) {
         this.config = config;
@@ -39,6 +41,10 @@ final class BimgurWorkModel implements StatusBarPresentationModel {
 
     public ObservableList<RichTask> getTasks() {
         return tasks;
+    }
+
+    public ObservableList<User> getUsers() {
+        return users;
     }
 
     @Override

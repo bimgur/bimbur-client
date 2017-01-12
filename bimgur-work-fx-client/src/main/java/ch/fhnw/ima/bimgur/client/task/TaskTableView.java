@@ -12,16 +12,15 @@ import javafx.scene.control.TableView;
 
 public final class TaskTableView extends TableView<RichTask> {
 
-    private static final String COLUMN_PROCESS = "Process";
+    private static final String COLUMN_ID = "ID";
     private static final String COLUMN_TASK = "Task";
     private static final String COLUMN_ASSIGNEE = "Assignee";
 
     public TaskTableView(ObservableList<RichTask> tasks) {
         super(tasks);
 
-        TableColumn<RichTask, String> analysisNameColumn = new TableColumn<>(COLUMN_PROCESS);
-        // TODO: Process name rather than id
-        analysisNameColumn.setCellValueFactory(task -> new SimpleStringProperty(task.getValue().getProcessInstance().getId().getRaw()));
+        TableColumn<RichTask, String> taskIdColumn = new TableColumn<>(COLUMN_ID);
+        taskIdColumn.setCellValueFactory(task -> new SimpleStringProperty(task.getValue().getId().getRaw()));
 
         TableColumn<RichTask, String> taskNameColumn = new TableColumn<>(COLUMN_TASK);
         taskNameColumn.setCellValueFactory(task -> new SimpleStringProperty(task.getValue().getName()));
@@ -30,7 +29,7 @@ public final class TaskTableView extends TableView<RichTask> {
         assigneeColumn.setCellValueFactory(task -> new SimpleObjectProperty<>(task.getValue().getAssignee()));
         assigneeColumn.setCellFactory(column -> new UserCellValueRenderer<>());
 
-        getColumns().add(analysisNameColumn);
+        getColumns().add(taskIdColumn);
         getColumns().add(taskNameColumn);
         getColumns().add(assigneeColumn);
 
