@@ -23,31 +23,34 @@ User-Agent: okhttp/3.3.0
 responseStart = '{"data":[{"id":"fozzie","firstName":"Fozzie","lastName":"Bear",'
 
 def httpGET():
-        try:
-            c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            # connect to the socket
-            c.connect((IP, PORT))
-            # create a file-like object to read
-            fileobj = c.makefile('r', 0)
-            # Ask the server for the file
-            fileobj.write(REQUEST)
-            response = fileobj.readlines()
-            return response[25]
-        except Exception:
-            print "Unexpected error:", sys.exc_info()[0]
-            sys.exit("Not able to get users")
+    print "Try to get users from Activiti endpoint"
+    try:
+        c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # connect to the socket
+        c.connect((IP, PORT))
+        # create a file-like object to read
+        fileobj = c.makefile('r', 0)
+        # Ask the server for the file
+        fileobj.write(REQUEST)
+        response = fileobj.readlines()
+        return response[25]
+    except Exception:
+        print "Unexpected error:", sys.exc_info()[0]
+        sys.exit("Not able to get users")
 
 def isServerReady(response):
+    print "Successfully received a response"
     return response[:len(responseStart)] == responseStart
 
 def giveServerTimeToSetUp():
+    print "Wait 60s until docker container should be running"
     time.sleep(60)
 
 def main():
     giveServerTimeToSetUp()
     while(not isServerReady(httpGET())):
-        print "wait for activiti to initialize" 
-    print "Success::Activti is set up and ready."
+        print "Failed: The Response did not meet the expectation" 
+    print "Success: Activti is set up and ready."
 
 if __name__ == '__main__':
       main()
