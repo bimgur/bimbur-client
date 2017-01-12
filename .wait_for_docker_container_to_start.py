@@ -2,6 +2,7 @@
 
 import socket
 import sys
+import time
 
 IP = "127.0.0.1"
 PORT = 8080
@@ -39,8 +40,11 @@ def httpGET():
 def isServerReady(response):
     return response[:len(responseStart)] == responseStart
 
+def giveServerTimeToSetUp():
+    time.sleep(60)
 
 def main():
+    giveServerTimeToSetUp()
     while(not isServerReady(httpGET())):
         print "wait for activiti to initialize" 
     print "Success::Activti is set up and ready."
