@@ -5,12 +5,18 @@ import ch.fhnw.ima.bimgur.activiti.TestUtils;
 import ch.fhnw.ima.bimgur.activiti.model.User;
 import ch.fhnw.ima.bimgur.activiti.model.UserId;
 import io.reactivex.Observable;
+import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeAll;
+<<<<<<< HEAD
+=======
+import org.junit.jupiter.api.Disabled;
+>>>>>>> b959a3e42b2ea88ca7e6b65e62684d16db1846a7
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 @IntegrationTest
+@Disabled
 public class IdentityServiceTest {
 
     private static IdentityService service;
