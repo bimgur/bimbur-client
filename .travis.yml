@@ -14,6 +14,7 @@ before_script:
   - ./gradlew build -x test
   - docker build --tag=bimgur .
   - docker run -d -p 8080:8080 -p 5433:5432 bimgur
+  - python .wait_for_docker_container_to_start.py
 
 script:
   - ./gradlew test -PrunIntegrationTests
