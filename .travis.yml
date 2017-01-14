@@ -16,6 +16,7 @@ before_script:
   - ./wait-for-tomcat.sh
 
 script:
+  - ./gradlew test
   - ./gradlew test -PrunIntegrationTests
 
 before_cache:
