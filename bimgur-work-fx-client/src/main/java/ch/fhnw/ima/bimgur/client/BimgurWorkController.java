@@ -99,10 +99,9 @@ public final class BimgurWorkController implements
     @Override
     public Observable<RichTask> loadTasks() {
         Observable<Task> tasks = services().getTaskService().getTasks();
-        Observable<RichTask> richTasks = tasks.map(t -> {
-                    // TODO: Investigate how to do this in a non-blocking fashion
-                    User assignee = lazyGetUser(t.getAssigneeId()).blockingGet();
-                    return new RichTask(t, assignee);
+        Observable<RichTask> richTasks = tasks.flatMapSingle(t -> {
+                    Single<User> assignee = lazyGetUser(t.getAssigneeId());
+                    return assignee.map(a -> new RichTask(t, a));
                 }
         );
         richTasks
