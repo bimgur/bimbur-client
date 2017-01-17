@@ -3,7 +3,8 @@ package ch.fhnw.ima.bimgur.activiti.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ProcessDefinition {
+public final class ProcessDefinition {
+
     private final ProcessDefinitionId id;
     private final String key;
     private final String category;
@@ -23,7 +24,6 @@ public class ProcessDefinition {
         this.suspended = suspended;
         this.name = name;
     }
-
 
     public ProcessDefinitionId getId() {
         return id;
