@@ -3,8 +3,6 @@ package ch.fhnw.ima.bimgur.activiti.service;
 import ch.fhnw.ima.bimgur.activiti.IntegrationTest;
 import ch.fhnw.ima.bimgur.activiti.TestUtils;
 import ch.fhnw.ima.bimgur.activiti.model.*;
-import io.reactivex.Observable;
-import okhttp3.ResponseBody;
 import org.activiti.engine.ProcessEngine;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 /**
  * Created by fabrizio.parrillo on 23.12.2016.
@@ -23,6 +20,8 @@ public class TaskServiceTest {
 
     private static TaskService taskService;
     private static final ProcessEngine PROCESS_ENGINE = TestUtils.processEngine();
+    private org.activiti.engine.identity.User firstUserByProcessEngine;
+    private org.activiti.engine.task.Task firstTaskByProcessEngine;
 
     @BeforeAll
     static void beforeAll() {
@@ -43,6 +42,9 @@ public class TaskServiceTest {
 
         PROCESS_ENGINE.getRuntimeService()
                 .startProcessInstanceByKey("bimgur-demo-japanese-numbers");
+
+        this.firstUserByProcessEngine = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
+        this.firstTaskByProcessEngine = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
     }
 
     @Test
@@ -52,26 +54,15 @@ public class TaskServiceTest {
                 .map(Task::getId)
                 .map(TaskId::getRaw)
                 .test().assertResult(
-                PROCESS_ENGINE.getTaskService().createTaskQuery()
-                        .list().get(0).getId()
+                firstTaskByProcessEngine.getId()
         );
     }
 
     @Test
     void completeTask() {
-        org.activiti.engine.task.Task task = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
-        Observable<ResponseBody> testObserver = taskService
-                .complete(
-                        task.getId(),
-                        new TaskCompleteDTO());
-        testObserver.subscribe(responseBody -> {
-            org.activiti.engine.task.Task task1 = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
-            assertNotEquals(task, task1);
-        });
-
         taskService
                 .complete(
-                        PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0).getId(),
+                        firstTaskByProcessEngine.getId(),
                         new TaskCompleteDTO())
                 .test().assertComplete();
 
@@ -79,96 +70,90 @@ public class TaskServiceTest {
 
     @Test
     void claimTask() {
-        org.activiti.engine.task.Task task = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
-        org.activiti.engine.identity.User user = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
-        taskService.claim(task.getId(), new TaskClaimDTO(new UserId(user.getId())))
+        taskService.claim(
+                firstTaskByProcessEngine.getId(),
+                new TaskClaimDTO(new UserId(firstUserByProcessEngine.getId())))
                 .test()
                 .assertComplete();
 
 
         org.activiti.engine.task.Task assigneedTask
-                = PROCESS_ENGINE.getTaskService().createTaskQuery().taskAssignee(user.getId()).list().get(0);
+                = PROCESS_ENGINE.getTaskService().createTaskQuery().taskAssignee(firstUserByProcessEngine.getId()).list().get(0);
 
-        assertEquals(task.getId(), assigneedTask.getId());
-
+        assertEquals(
+                firstTaskByProcessEngine.getId(),
+                assigneedTask.getId()
+        );
 
 
     }
 
     @Test
     void getFilteredTasksJustAssignee() {
-        org.activiti.engine.identity.User user = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
         PROCESS_ENGINE.getTaskService().setAssignee(
-                PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0).getId(),
-                user.getId()
+                firstTaskByProcessEngine.getId(),
+                firstUserByProcessEngine.getId()
         );
 
-        taskService.getFilteredTasks(new UserId(user.getId()), null, null)
+        taskService.getFilteredTasks(new UserId(firstUserByProcessEngine.getId()), null, null)
                 .elementAt(0)
                 .map(Task::getId)
                 .map(TaskId::getRaw)
-                .test().assertResult(
-                PROCESS_ENGINE.getTaskService().createTaskQuery()
-                        .list().get(0).getId()
-        );
+                .test()
+                .assertResult(
+                        firstTaskByProcessEngine.getId()
+                );
     }
 
     @Test
     void getFilteredTasksByAllQuerryParameterAsAssignee() {
-        org.activiti.engine.identity.User user = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
-        org.activiti.engine.task.Task task = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
-
         PROCESS_ENGINE.getTaskService().setAssignee(
-                PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0).getId(),
-                user.getId()
+                firstTaskByProcessEngine.getId(),
+                firstUserByProcessEngine.getId()
         );
 
         taskService
                 .getFilteredTasks(
-                        new UserId(user.getId()),
-                        new ProcessInstanceId(task.getProcessInstanceId()),
+                        new UserId(firstUserByProcessEngine.getId()),
+                        new ProcessInstanceId(firstTaskByProcessEngine.getProcessInstanceId()),
                         null
                 )
                 .elementAt(0)
                 .map(Task::getId)
                 .map(TaskId::getRaw)
                 .test()
-                .assertResult(task.getId());
+                .assertResult(firstTaskByProcessEngine.getId());
     }
 
     @Test
     void getFilteredTasksByAllQuerryParameterAsCanidate() {
-        org.activiti.engine.identity.User user = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
-        org.activiti.engine.task.Task task = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
-
-
         PROCESS_ENGINE.getTaskService()
-                .addCandidateUser(task.getId(), user.getId());
+                .addCandidateUser(
+                        firstTaskByProcessEngine.getId(),
+                        firstUserByProcessEngine.getId()
+                );
 
         taskService
                 .getFilteredTasks(
                         null,
-                        new ProcessInstanceId(task.getProcessInstanceId()),
-                        new UserId(user.getId())
+                        new ProcessInstanceId(firstTaskByProcessEngine.getProcessInstanceId()),
+                        new UserId(firstUserByProcessEngine.getId())
                 )
                 .elementAt(0)
                 .map(Task::getId)
                 .map(TaskId::getRaw)
                 .test()
-                .assertResult(task.getId());
-
-
+                .assertResult(firstTaskByProcessEngine.getId());
     }
 
     @Test
     void getTasksByAssignee() {
-        org.activiti.engine.identity.User user = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
         PROCESS_ENGINE.getTaskService().setAssignee(
-                PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0).getId(),
-                user.getId()
+                firstTaskByProcessEngine.getId(),
+                firstUserByProcessEngine.getId()
         );
 
-        taskService.getTasksByAssignee(new UserId(user.getId()))
+        taskService.getTasksByAssignee(new UserId(firstUserByProcessEngine.getId()))
                 .elementAt(0)
                 .map(Task::getId)
                 .map(TaskId::getRaw)
@@ -180,29 +165,27 @@ public class TaskServiceTest {
 
     @Test
     void getTasksByCandidateUser() {
-        org.activiti.engine.identity.User user = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
-        org.activiti.engine.task.Task task = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
         PROCESS_ENGINE.getTaskService()
-                .addCandidateUser(task.getId(), user.getId());
+                .addCandidateUser(firstTaskByProcessEngine.getId(), firstUserByProcessEngine.getId());
 
-        taskService.getTasksByCandidateUser(new UserId(user.getId()))
+        taskService.getTasksByCandidateUser(new UserId(firstUserByProcessEngine.getId()))
                 .elementAt(0)
                 .map(Task::getId)
                 .map(TaskId::getRaw)
                 .test()
-                .assertResult(task.getId());
+                .assertResult(firstTaskByProcessEngine.getId());
     }
 
     @Test
     void getTasksByProcessInstanceId() {
-        org.activiti.engine.task.Task task = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
-
-        taskService.getTasksByProcessInstanceId(new ProcessInstanceId(task.getProcessInstanceId()))
+        taskService
+                .getTasksByProcessInstanceId(
+                        new ProcessInstanceId(firstTaskByProcessEngine.getProcessInstanceId()))
                 .elementAt(0)
                 .map(Task::getId)
                 .map(TaskId::getRaw)
                 .test()
-                .assertResult(task.getId());
+                .assertResult(firstTaskByProcessEngine.getId());
     }
 
 }

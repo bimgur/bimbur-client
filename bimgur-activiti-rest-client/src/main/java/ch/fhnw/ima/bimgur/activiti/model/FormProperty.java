@@ -12,7 +12,9 @@ public class FormProperty {
     private String name;
     private String type;
 
-    public void FromProperty(
+
+
+   public FormProperty(
             @JsonProperty("id") String fromPropertyId,
             @JsonProperty("name") String name,
             @JsonProperty("type") String type,

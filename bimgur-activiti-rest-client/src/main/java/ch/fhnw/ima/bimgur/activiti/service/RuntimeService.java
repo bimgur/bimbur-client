@@ -1,8 +1,8 @@
 package ch.fhnw.ima.bimgur.activiti.service;
 
 import ch.fhnw.ima.bimgur.activiti.model.ProcessInstance;
-import ch.fhnw.ima.bimgur.activiti.model.StartProcessInstanceById;
-import ch.fhnw.ima.bimgur.activiti.model.StartProcessInstanceByKey;
+import ch.fhnw.ima.bimgur.activiti.model.StartProcessInstanceByIdDto;
+import ch.fhnw.ima.bimgur.activiti.model.StartProcessInstanceByKeyDto;
 import ch.fhnw.ima.bimgur.activiti.model.util.ResultList;
 import ch.fhnw.ima.bimgur.activiti.service.util.ResultListExtractor;
 import io.reactivex.Observable;
@@ -22,10 +22,10 @@ public interface RuntimeService {
 
     @Headers("Content-type: application/json")
     @POST("runtime/process-instances")
-    Observable<ProcessInstance> startProcessInstance(@Body StartProcessInstanceByKey startData);
+    Observable<ProcessInstance> startProcessInstance(@Body StartProcessInstanceByKeyDto startData);
 
     @Headers("Content-type: application/json")
     @POST("runtime/process-instances")
-    Observable<ProcessInstance> startProcessInstance(@Body StartProcessInstanceById startData);
+    Observable<ProcessInstance> startProcessInstance(@Body StartProcessInstanceByIdDto startData);
 
 }

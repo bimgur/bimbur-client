@@ -4,38 +4,56 @@ import ch.fhnw.ima.bimgur.activiti.IntegrationTest;
 import ch.fhnw.ima.bimgur.activiti.TestUtils;
 import ch.fhnw.ima.bimgur.activiti.model.ProcessDefinitionId;
 import ch.fhnw.ima.bimgur.activiti.model.ProcessInstance;
-import ch.fhnw.ima.bimgur.activiti.model.StartProcessInstanceById;
-import ch.fhnw.ima.bimgur.activiti.model.StartProcessInstanceByKey;
-import io.reactivex.Observable;
+import ch.fhnw.ima.bimgur.activiti.model.StartProcessInstanceByIdDto;
+import ch.fhnw.ima.bimgur.activiti.model.StartProcessInstanceByKeyDto;
+import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.repository.ProcessDefinition;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
 @IntegrationTest
 public class RuntimeServiceTest {
-
     private static RuntimeService runtimeService;
+    private static final ProcessEngine PROCESS_ENGINE = TestUtils.processEngine();
 
-    @BeforeAll
-    static void beforeAll() {
+
+    @BeforeEach
+    void beforeAll() {
         runtimeService = TestUtils.client().getRuntimeService();
 
         TestUtils.resetDeployments();
         TestUtils.loadAndDeployTestDeployments(
                 Collections.singletonList("demo-japanese-numbers.bpmn20.xml"));
 
-        TestUtils.processEngine().getRuntimeService()
-                .startProcessInstanceByKey("bimgur-demo-japanese-numbers");
     }
 
     @Test
+    void getProcessInstances() {
+        runtimeService.getProcessInstances().test()
+                .assertValueCount(0);
+
+        PROCESS_ENGINE.getRuntimeService()
+                .startProcessInstanceByKey(
+                        PROCESS_ENGINE.getRepositoryService()
+                                .createProcessDefinitionQuery().list().get(0)
+                                .getKey()
+                );
+
+        runtimeService.getProcessInstances().test()
+                .assertValueCount(1);
+    }
+
+
+    @Test
     void startProcessInstanceByKey() {
-        String processDefinitionKey = "bimgur-demo-japanese-numbers";
-        StartProcessInstanceByKey startData = new StartProcessInstanceByKey(processDefinitionKey);
-        Observable<ProcessInstance> result = RuntimeServiceTest.runtimeService.startProcessInstance(startData);
-        result
+        String processDefinitionKey = PROCESS_ENGINE.getRepositoryService()
+                .createProcessDefinitionQuery().list().get(0).getKey();
+
+        StartProcessInstanceByKeyDto startDto = new StartProcessInstanceByKeyDto(processDefinitionKey);
+
+        runtimeService.startProcessInstance(startDto)
                 .map(ProcessInstance::getProcessDefinitionUrl)
                 .test()
                 .assertValue(url -> url.contains(processDefinitionKey));
@@ -43,14 +61,15 @@ public class RuntimeServiceTest {
 
     @Test
     void startProcessInstanceById() {
-        org.activiti.engine.RepositoryService repositoryService = TestUtils.processEngine().getRepositoryService();
-        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().list().get(0);
+        ProcessDefinition processDefinition =
+                PROCESS_ENGINE.getRepositoryService().
+                        createProcessDefinitionQuery().list().get(0);
+
         ProcessDefinitionId processDefinitionId = new ProcessDefinitionId(processDefinition.getId());
-        StartProcessInstanceById startData = new StartProcessInstanceById(processDefinitionId);
-        Observable<ProcessInstance> result = RuntimeServiceTest.runtimeService.startProcessInstance(startData);
+        StartProcessInstanceByIdDto startDto = new StartProcessInstanceByIdDto(processDefinitionId);
 
 
-        result
+        runtimeService.startProcessInstance(startDto)
                 .map(ProcessInstance::getProcessDefinitionUrl)
                 .test()
                 .assertValue(url -> url.contains(processDefinition.getKey()));
