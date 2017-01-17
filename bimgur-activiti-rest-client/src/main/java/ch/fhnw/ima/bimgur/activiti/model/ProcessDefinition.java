@@ -9,7 +9,6 @@ public class ProcessDefinition {
     private final String category;
     private final Boolean suspended;
     private final String name;
-    private final String description;
 
     @JsonCreator
     public ProcessDefinition(
@@ -17,14 +16,12 @@ public class ProcessDefinition {
             @JsonProperty("key") String key,
             @JsonProperty("category") String category,
             @JsonProperty("suspended") Boolean suspended,
-            @JsonProperty("name") String name,
-            @JsonProperty("description") String description) {
+            @JsonProperty("name") String name) {
         this.id = new ProcessDefinitionId(id);
         this.key = key;
         this.category = category;
         this.suspended = suspended;
         this.name = name;
-        this.description = description;
     }
 
 
@@ -48,9 +45,6 @@ public class ProcessDefinition {
         return name;
     }
 
-    public String getDescription() {
-        return description;
-    }
 
     @Override
     public boolean equals(Object o) {
