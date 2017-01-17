@@ -14,12 +14,12 @@ import java.util.List;
 
 @IntegrationTest
 public class RepositoryServiceTest {
-    private static RepositoryService service;
+    private static RepositoryService repositoryService;
 
 
     @BeforeAll
     static void beforeAll() {
-        service = TestUtils.client().getRepositoryService();
+        repositoryService = TestUtils.client().getRepositoryService();
         TestUtils.resetDeployments();
         TestUtils.loadAndDeployTestDeployments(
                 Collections.singletonList("bimgur-Integration-Test-RepositoryService.bpmn20.xml"));
@@ -27,7 +27,7 @@ public class RepositoryServiceTest {
 
     @Test
     public void getProcessDefinition() throws Exception {
-        Observable<ProcessDefinition> prcessDefinitoin = service.getProcessDefinition();
+        Observable<ProcessDefinition> prcessDefinitoin = repositoryService.getProcessDefinition();
         prcessDefinitoin
                 .toList()
                 .map(List::size)
@@ -36,67 +36,67 @@ public class RepositoryServiceTest {
 
     @Test
     public void getProcessDefinitionId() {
-        Observable<ProcessDefinition> prcessDefinitoin = service.getProcessDefinition();
-        String expectedProcessDefinitionId = "bimgur-Integration-Test-RepositoryService:1:";
+        String expectedProcessDefinitionId =
+                getFirstProcessDefintionByActivityProcessEngine().getId();
 
-        prcessDefinitoin
+        repositoryService.getProcessDefinition()
+                .elementAt(0)
                 .map(ProcessDefinition::getId)
                 .map(ProcessDefinitionId::getRaw)
-                .map(s -> s.substring(0, expectedProcessDefinitionId.length()))
                 .test()
                 .assertValue(expectedProcessDefinitionId);
-
     }
 
     @Test
     public void getProcessDefinitionKey() {
-        Observable<ProcessDefinition> prcessDefinitoin = service.getProcessDefinition();
-        prcessDefinitoin
+        String expectedProcessDefinitionKey =
+                getFirstProcessDefintionByActivityProcessEngine().getKey();
+
+        repositoryService.getProcessDefinition()
                 .map(ProcessDefinition::getKey)
                 .test()
-                .assertValue("bimgur-Integration-Test-RepositoryService");
-
+                .assertValue(expectedProcessDefinitionKey);
     }
 
     @Test
     public void getProcessDefinitionCategory() {
-        Observable<ProcessDefinition> prcessDefinitoin = service.getProcessDefinition();
-        prcessDefinitoin
+        String expectedCategory =
+                getFirstProcessDefintionByActivityProcessEngine().getCategory();
+
+        repositoryService.getProcessDefinition()
                 .map(ProcessDefinition::getCategory)
                 .test()
-                .assertValue("http://www.activiti.org/processdef");
+                .assertValue(expectedCategory);
 
     }
 
     @Test
     public void getProcessDefinitionSuspended() {
-        Observable<ProcessDefinition> prcessDefinitoin = service.getProcessDefinition();
+        Boolean expectedSuspended =
+                getFirstProcessDefintionByActivityProcessEngine().isSuspended();
 
-        prcessDefinitoin
+        repositoryService.getProcessDefinition()
                 .map(ProcessDefinition::getSuspended)
                 .test()
-                .assertValue(false);
-    }
-
-        @Test
-    public void getProcessDefinitioName() {
-        Observable<ProcessDefinition> prcessDefinitoin = service.getProcessDefinition();
-
-        prcessDefinitoin
-                .map(ProcessDefinition::getName)
-                .test()
-                .assertValue("IntegrationTest");
+                .assertValue(expectedSuspended);
     }
 
     @Test
-    public void getProcessDefinitioDescription() {
-        Observable<ProcessDefinition> prcessDefinitoin = service.getProcessDefinition();
+    public void getProcessDefinitioName() {
+        String expectedName =
+                getFirstProcessDefintionByActivityProcessEngine().getName();
 
-       /* prcessDefinitoin
-                .map(ProcessDefinition::getDescription)
+        repositoryService.getProcessDefinition()
+                .map(ProcessDefinition::getName)
                 .test()
-                .assertValue("");*/
+                .assertValue(expectedName);
     }
 
 
+    private static org.activiti.engine.repository.ProcessDefinition
+    getFirstProcessDefintionByActivityProcessEngine() {
+        return TestUtils.processEngine()
+                .getRepositoryService().createProcessDefinitionQuery()
+                .list().get(0);
+    }
 }
