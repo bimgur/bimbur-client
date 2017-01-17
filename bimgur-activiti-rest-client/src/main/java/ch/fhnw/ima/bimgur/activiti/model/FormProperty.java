@@ -1,35 +1,30 @@
 package ch.fhnw.ima.bimgur.activiti.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * Created by fabrizio.parrillo on 23.12.2016.
- */
-public class FormProperty {
+public final class FormProperty {
 
-    private String value;
-    private String fromPropertyId;
-    private String name;
-    private String type;
+    private final FormPropertyId id;
+    private final String value;
+    private final String name;
+    private final String type;
 
-    public void FromProperty(
-            @JsonProperty("id") String fromPropertyId,
+    @JsonCreator
+    public FormProperty(
+            @JsonProperty("id") String id,
             @JsonProperty("name") String name,
             @JsonProperty("type") String type,
             @JsonProperty("value") String value
     ) {
-        this.fromPropertyId = fromPropertyId;
+        this.id = new FormPropertyId(id);
         this.name = name;
         this.type = type;
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public String getFromPropertyId() {
-        return fromPropertyId;
+    public FormPropertyId getId() {
+        return id;
     }
 
     public String getName() {
@@ -39,4 +34,9 @@ public class FormProperty {
     public String getType() {
         return type;
     }
+
+    public String getValue() {
+        return value;
+    }
+
 }
