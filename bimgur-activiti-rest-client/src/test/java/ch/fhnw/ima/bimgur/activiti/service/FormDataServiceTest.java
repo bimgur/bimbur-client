@@ -24,6 +24,8 @@ public class FormDataServiceTest {
 
     private static FormDataService formDataService;
     private static final ProcessEngine PROCESS_ENGINE = TestUtils.processEngine();
+    private org.activiti.engine.identity.User firstUserByProcessEngine;
+    private org.activiti.engine.task.Task firstTaskByProcessEngine;
 
     @BeforeAll
     static void beforeAll() {
@@ -40,23 +42,66 @@ public class FormDataServiceTest {
 
         PROCESS_ENGINE.getRuntimeService()
                 .startProcessInstanceByKey("bimgur-demo-japanese-numbers", Collections.singletonMap("iteration", 0));
+
+
+        this.firstUserByProcessEngine = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
+        this.firstTaskByProcessEngine = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
     }
 
     @Test
     void getFormData() {
-
-        Task task = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
-        User user = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
         PROCESS_ENGINE.getTaskService().claim(
-                task.getId(),
-                user.getId()
+                firstTaskByProcessEngine.getId(),
+                firstUserByProcessEngine.getId()
         );
 
-        formDataService.getTaskFormData(new TaskId(task.getId()))
+        formDataService.getTaskFormData(new TaskId(firstTaskByProcessEngine.getId()))
                 .flatMap(formData -> Observable.fromIterable(formData.getFormProperties()))
                 .map(FormProperty::getName)
                 .test().assertResult("FormProperty1", "FormProperty2");
+
+
     }
+
+    @Test
+    void getStringValueFromFormProperty() {
+        PROCESS_ENGINE.getTaskService().claim(
+                firstTaskByProcessEngine.getId(),
+                firstUserByProcessEngine.getId()
+        );
+
+
+        formDataService.getTaskFormData(new TaskId(firstTaskByProcessEngine.getId()))
+                .flatMap(formData -> Observable.fromIterable(formData.getFormProperties()))
+                .map(formProperty ->
+                        formProperty
+                                .getModelValue()
+                                .convertFormValueToModelValue(
+                                        formProperty.getFormValue()).getClass().toString()
+                ).firstElement()
+        .test().assertResult(String.class.toString());
+
+    }
+    @Test
+    void getLongValueFromFormProperty() {
+        PROCESS_ENGINE.getTaskService().claim(
+                firstTaskByProcessEngine.getId(),
+                firstUserByProcessEngine.getId()
+        );
+
+
+        formDataService.getTaskFormData(new TaskId(firstTaskByProcessEngine.getId()))
+                .flatMap(formData -> Observable.fromIterable(formData.getFormProperties()))
+                .map(formProperty ->
+                        formProperty
+                                .getModelValue()
+                                .convertFormValueToModelValue(
+                                        formProperty.getFormValue()).getClass().toString()
+                ).skip(1).firstElement()
+        .test().assertResult(Long.class.toString());
+
+    }
+
 
     @Test
     void submitTaskFormData() {
