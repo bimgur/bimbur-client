@@ -13,9 +13,7 @@ public final class TaskFormData {
     private final List<Map<String, String>> properties;
 
     @JsonCreator
-    public TaskFormData(
-            @JsonProperty("taskId") TaskId taskId,
-            @JsonProperty("properties") List<Tuple2<FormPropertyId, String>> properties) {
+    public TaskFormData(@JsonProperty("taskId") TaskId taskId, @JsonProperty("properties") List<Tuple2<FormPropertyId, String>> properties) {
         this.taskId = taskId.getRaw();
         this.properties = properties.map(t -> HashMap.of("id", t._1.getRaw(), "value", t._2));
     }
