@@ -24,6 +24,8 @@ public class FormDataServiceTest {
 
     private static FormDataService formDataService;
     private static final ProcessEngine PROCESS_ENGINE = TestUtils.processEngine();
+    private org.activiti.engine.identity.User firstUserByProcessEngine;
+    private org.activiti.engine.task.Task firstTaskByProcessEngine;
 
     @BeforeAll
     static void beforeAll() {
@@ -40,22 +42,91 @@ public class FormDataServiceTest {
 
         PROCESS_ENGINE.getRuntimeService()
                 .startProcessInstanceByKey("bimgur-demo-japanese-numbers", Collections.singletonMap("iteration", 0));
+
+        this.firstUserByProcessEngine = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
+        this.firstTaskByProcessEngine = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
+
     }
 
     @Test
-    void getFormData() {
+    void getFormDataFormPropertyName() {
 
-        Task task = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
-        User user = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
         PROCESS_ENGINE.getTaskService().claim(
-                task.getId(),
-                user.getId()
+                firstTaskByProcessEngine.getId(),
+                firstUserByProcessEngine.getId()
         );
 
-        formDataService.getTaskFormData(new TaskId(task.getId()))
+        formDataService.getTaskFormData(new TaskId(firstTaskByProcessEngine.getId()))
                 .flatMap(formData -> Observable.fromIterable(formData.getFormProperties()))
                 .map(FormProperty::getName)
                 .test().assertResult("FormProperty1", "FormProperty2");
+    }
+
+    @Test
+    void getFormDataFormPropertyId() {
+
+        PROCESS_ENGINE.getTaskService().claim(
+                firstTaskByProcessEngine.getId(),
+                firstUserByProcessEngine.getId()
+        );
+
+        formDataService.getTaskFormData(new TaskId(firstTaskByProcessEngine.getId()))
+                .flatMap(formData -> Observable.fromIterable(formData.getFormProperties()))
+                .map(FormProperty::getId)
+                .map(FormPropertyId::getRaw)
+                .test().assertResult("info", "round");
+    }    @Test
+    void getFormDataFormPropertyType() {
+
+        PROCESS_ENGINE.getTaskService().claim(
+                firstTaskByProcessEngine.getId(),
+                firstUserByProcessEngine.getId()
+        );
+
+        formDataService.getTaskFormData(new TaskId(firstTaskByProcessEngine.getId()))
+                .flatMap(formData -> Observable.fromIterable(formData.getFormProperties()))
+                .map(FormProperty::getType)
+                .test().assertResult("string", "long");
+    }
+    @Test
+    void getFormDataFormPropertyValue() {
+
+        PROCESS_ENGINE.getTaskService().claim(
+                firstTaskByProcessEngine.getId(),
+                firstUserByProcessEngine.getId()
+        );
+
+        formDataService.getTaskFormData(new TaskId(firstTaskByProcessEngine.getId()))
+                .flatMap(formData -> Observable.fromIterable(formData.getFormProperties()))
+                .map(FormProperty::getValue)
+                .test().assertResult("Japanese Numbers", "1");
+    }
+
+    @Test
+    void getFormDataFormPropertyIsWritable() {
+
+        PROCESS_ENGINE.getTaskService().claim(
+                firstTaskByProcessEngine.getId(),
+                firstUserByProcessEngine.getId()
+        );
+
+        formDataService.getTaskFormData(new TaskId(firstTaskByProcessEngine.getId()))
+                .flatMap(formData -> Observable.fromIterable(formData.getFormProperties()))
+                .map(FormProperty::isWritable)
+                .test().assertResult(true, false);
+    }
+
+    @Test
+    void getFormDataFormPropertyIsRequired() {
+        PROCESS_ENGINE.getTaskService().claim(
+                firstTaskByProcessEngine.getId(),
+                firstUserByProcessEngine.getId()
+        );
+
+        formDataService.getTaskFormData(new TaskId(firstTaskByProcessEngine.getId()))
+                .flatMap(formData -> Observable.fromIterable(formData.getFormProperties()))
+                .map(FormProperty::isRequired)
+                .test().assertResult(true, false);
     }
 
     @Test
