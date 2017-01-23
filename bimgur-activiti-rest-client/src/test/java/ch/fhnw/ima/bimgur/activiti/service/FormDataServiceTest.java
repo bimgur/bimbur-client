@@ -88,10 +88,30 @@ public class FormDataServiceTest {
                 Tuple.of(new FormPropertyId("numberA"), "42")
         );
 
-        TaskFormData taskFormData = new TaskFormData(new TaskId(analysisTask.getId()), properties);
-        formDataService.submitTaskFormData(taskFormData)
+        formDataService.submitTaskFormData(new TaskId(analysisTask.getId()), properties)
                 .test()
                 .assertComplete();
     }
+
+    @Test
+    void submitStartFormData() {
+        Task infoTask = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
+        User user = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
+
+        PROCESS_ENGINE.getTaskService().claim(infoTask.getId(), user.getId());
+        PROCESS_ENGINE.getTaskService().complete(infoTask.getId());
+
+        Task analysisTask = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
+        PROCESS_ENGINE.getTaskService().claim(analysisTask.getId(), user.getId());
+
+        List<Tuple2<FormPropertyId, String>> properties = List.of(
+                Tuple.of(new FormPropertyId("numberA"), "42")
+        );
+
+        formDataService.submitStartFormData(new ProcessDefinitionId(analysisTask.getProcessDefinitionId()), properties)
+                .test()
+                .assertComplete();
+    }
+
 
 }
