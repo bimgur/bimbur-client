@@ -2,10 +2,7 @@ package ch.fhnw.ima.bimgur.activiti.service;
 
 import ch.fhnw.ima.bimgur.activiti.IntegrationTest;
 import ch.fhnw.ima.bimgur.activiti.TestUtils;
-import ch.fhnw.ima.bimgur.activiti.model.FormProperty;
-import ch.fhnw.ima.bimgur.activiti.model.FormPropertyId;
-import ch.fhnw.ima.bimgur.activiti.model.TaskFormData;
-import ch.fhnw.ima.bimgur.activiti.model.TaskId;
+import ch.fhnw.ima.bimgur.activiti.model.*;
 import io.reactivex.Observable;
 import javaslang.Tuple;
 import javaslang.Tuple2;
@@ -24,6 +21,8 @@ public class FormDataServiceTest {
 
     private static FormDataService formDataService;
     private static final ProcessEngine PROCESS_ENGINE = TestUtils.processEngine();
+    private org.activiti.engine.identity.User firstUserByProcessEngine;
+    private org.activiti.engine.task.Task firstTaskByProcessEngine;
 
     @BeforeAll
     static void beforeAll() {
@@ -40,11 +39,27 @@ public class FormDataServiceTest {
 
         PROCESS_ENGINE.getRuntimeService()
                 .startProcessInstanceByKey("bimgur-demo-japanese-numbers", Collections.singletonMap("iteration", 0));
+
+        this.firstUserByProcessEngine = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
+        this.firstTaskByProcessEngine = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
+
     }
 
     @Test
-    void getFormData() {
+    void getFormDataListByProcessDefinitionId() {
+        PROCESS_ENGINE.getTaskService().claim(
+                firstTaskByProcessEngine.getId(),
+                firstUserByProcessEngine.getId()
+        );
 
+        formDataService.getStartFormData(new ProcessDefinitionId(firstTaskByProcessEngine.getProcessDefinitionId()))
+                .flatMap(formData -> Observable.fromIterable(formData.getFormProperties()))
+                .test()
+                .assertComplete();
+    }
+
+    @Test
+    void getFormDataFormPropertyName() {
         Task task = PROCESS_ENGINE.getTaskService().createTaskQuery().list().get(0);
         User user = PROCESS_ENGINE.getIdentityService().createUserQuery().list().get(0);
         PROCESS_ENGINE.getTaskService().claim(
