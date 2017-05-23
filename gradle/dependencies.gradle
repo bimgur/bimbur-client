@@ -32,8 +32,8 @@ libraries.log4j = [
 
 ]
 
-def junitPlatformVersion = '1.0.0-M3'
-def junitJupiterVersion  = '5.0.0-M3'
+def junitPlatformVersion = '1.0.0-M4'
+def junitJupiterVersion  = '5.0.0-M4'
 libraries.junit5 = [
         "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}",
         "org.junit.platform:junit-platform-runner:${junitPlatformVersion}",

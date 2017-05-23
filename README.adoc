@@ -117,11 +117,10 @@ For the steps in the `Dockerfile` to succeed, all custom code first need to be c
 * Java SE Development Kit 8
 
 ```
-brew install caskroom/cask/brew-cask
 brew install cask java
 ```
 
-#### Compile Bimgur Artifacts via SBT
+#### Compile Bimgur Artifacts via Gradle
 
 From the root directory (where this README is contained):
 
@@ -133,11 +132,9 @@ From the root directory (where this README is contained):
 
 #### Install Docker Machine
 
-http://stackoverflow.com/questions/32744780/install-docker-toolbox-on-a-mac-via-command-line[OSX via Homebrew]:
-
 ```
-# Install Cask
-brew install caskroom/cask/brew-cask
+# Make Cask available
+brew tap caskroom/cask
 
 # Install docker toolbox
 brew cask install docker-toolbox

@@ -8,11 +8,16 @@ import java.util.List;
 
 public interface TestUtils {
 
-    String HOST = "127.0.0.1"; // TODO: make configurable on OSX (192.168.99.100)
-    String BASE_URL = "http://" + HOST + ":8080/activiti-rest/service/";
+    boolean IS_OSX = System.getProperty("os.name").toLowerCase().contains("mac");
+
+    String HOST = IS_OSX ? "192.168.99.100" : "localhost";
+    String BASE_URL = String.format("http://%s:8080/activiti-rest/service/", HOST);
+
     String USER_NAME = "kermit";
     String PASSWORD = "kermit";
-    String DB_URL = "jdbc:postgresql://" + HOST + ":5433/bimgurdb";
+
+    int DB_PORT = IS_OSX ? 5432 : 5433;
+    String DB_URL = String.format("jdbc:postgresql://%s:%s/bimgurdb", HOST, DB_PORT);
 
     static ActivitiRestClient client() {
         return ActivitiRestClient.connect(BASE_URL, USER_NAME, PASSWORD);
